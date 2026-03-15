@@ -1,0 +1,105 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc(uid) {
+      return get(/databases/$(database)/documents/users/$(uid));
+    }
+
+    function hasUserProfile() {
+      return isSignedIn() &&
+          exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function userRole() {
+      return hasUserProfile() ? userDoc(request.auth.uid).data.role : null;
+    }
+
+    function isSuperAdmin() {
+      return userRole() == 'super_admin';
+    }
+
+    function isCenterAdmin(centerId) {
+      return hasUserProfile() &&
+          (
+            isSuperAdmin() ||
+            (
+              userRole() == 'center_admin' &&
+              userDoc(request.auth.uid).data.centerId == centerId
+            )
+          );
+    }
+
+    function isCustomer() {
+      return userRole() == 'customer';
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isSuperAdmin());
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isSignedIn() && (request.auth.uid == userId || isSuperAdmin());
+      allow delete: if isSuperAdmin();
+    }
+
+    match /centers/{centerId} {
+      allow read: if true;
+      allow create, update, delete: if isCenterAdmin(centerId);
+
+      match /seats/{seatId} {
+        allow read: if true;
+
+        // Center admins can set any seat state for their own center.
+        allow create, update, delete: if isCenterAdmin(centerId);
+
+        // Customers can book only available seats and only for themselves.
+        allow create, update: if hasUserProfile() &&
+            isCustomer() &&
+            request.resource.data.centerId == centerId &&
+            request.resource.data.customerUid == request.auth.uid &&
+            request.resource.data.status == 'booked' &&
+            request.resource.data.index is int &&
+            (
+              !exists(/databases/$(database)/documents/centers/$(centerId)/seats/$(seatId)) ||
+              resource.data.status == 'available'
+            );
+
+        // Customers can release seats they booked.
+        allow update: if hasUserProfile() &&
+            isCustomer() &&
+            resource.data.customerUid == request.auth.uid &&
+            request.resource.data.status == 'available' &&
+            request.resource.data.customerUid == null;
+      }
+    }
+
+    match /bookings/{bookingId} {
+      allow read: if isSignedIn() &&
+          (
+            isSuperAdmin() ||
+            resource.data.customerUid == request.auth.uid ||
+            isCenterAdmin(resource.data.centerId)
+          );
+
+      allow create: if hasUserProfile() &&
+          isCustomer() &&
+          request.resource.data.customerUid == request.auth.uid &&
+          request.resource.data.centerId is string &&
+          request.resource.data.seatIndexes is list &&
+          request.resource.data.status == 'active';
+
+      allow update: if isSignedIn() &&
+          (
+            isCenterAdmin(resource.data.centerId) ||
+            (
+              resource.data.customerUid == request.auth.uid &&
+              request.resource.data.status == 'canceled'
+            )
+          );
+
+      allow delete: if isSuperAdmin();
+    }
+  }
+}

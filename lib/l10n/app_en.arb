@@ -1,0 +1,189 @@
+{
+  "@@locale": "en",
+  "appTitle": "E-Sport Center",
+  "changeLanguage": "Change language",
+  "loginTitle": "E-SPORT CENTER",
+  "username": "Username",
+  "email": "Email",
+  "password": "Password",
+  "confirmPassword": "Confirm password",
+  "signIn": "Sign in",
+  "signUp": "Sign up",
+  "switchToSignUp": "Don't have an account? Sign up",
+  "switchToSignIn": "Already have an account? Sign in",
+  "accountCreated": "Account created successfully. Please sign in.",
+  "usernameAlreadyExists": "This email is already in use.",
+  "passwordsDoNotMatch": "Passwords do not match.",
+  "authInvalidEmail": "Invalid email address.",
+  "authEmailPasswordNotEnabled": "Email/Password sign-in is disabled in Firebase.",
+  "authUserDisabled": "This account has been disabled.",
+  "authTooManyRequests": "Too many attempts. Try again later.",
+  "authApiKeyInvalid": "Firebase API key is invalid for this app.",
+  "authFirebaseNotInitialized": "Firebase is not initialized correctly.",
+  "authWeakPassword": "Password is too weak.",
+  "authNetworkError": "Network error. Please check your internet.",
+  "authUnknownError": "Authentication failed. Please try again.",
+  "login": "Login",
+  "invalidCredentials": "Invalid username or password",
+  "centersTitle": "E-SPORT CENTERS",
+  "homeTab": "Home",
+  "searchCenterHint": "Search center...",
+  "noCentersFound": "No centers found",
+  "mapTitle": "Center Map",
+  "mapTab": "Map",
+  "bookingHistoryTitle": "Booking History",
+  "addressLabel": "Address: {address}",
+  "@addressLabel": {
+    "placeholders": {
+      "address": {}
+    }
+  },
+  "pcCountLabel": "PC count: {count}",
+  "@pcCountLabel": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "pcSpecLabel": "PC spec: {spec}",
+  "@pcSpecLabel": {
+    "placeholders": {
+      "spec": {}
+    }
+  },
+  "pricePerHourLabel": "Price: {price}₮ / hour",
+  "@pricePerHourLabel": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+  "phoneLabel": "Phone: {phone}",
+  "@phoneLabel": {
+    "placeholders": {
+      "phone": {}
+    }
+  },
+  "selectPcSeats": "Select PC Seats",
+  "makeBooking": "Make Booking",
+  "selectSeatsTitle": "Select Seats - {center}",
+  "@selectSeatsTitle": {
+    "placeholders": {
+      "center": {}
+    }
+  },
+  "bookingTitle": "Booking",
+  "fillAllFields": "Please fill all fields.",
+  "selectAtLeastOneSeat": "Please select at least one PC seat.",
+  "invalidPlayDuration": "Play duration must be a positive number.",
+  "bookingConfirmed": "Booking Confirmed",
+  "bookingSummary": "{center}\\nSeats: {seats}\\nTime: {time}",
+  "@bookingSummary": {
+    "placeholders": {
+      "center": {},
+      "seats": {},
+      "time": {}
+    }
+  },
+  "ok": "OK",
+  "noneSelected": "None",
+  "centerLabel": "Center: {center}",
+  "@centerLabel": {
+    "placeholders": {
+      "center": {}
+    }
+  },
+  "selectedSeatsLabel": "Selected seats: {seats}",
+  "@selectedSeatsLabel": {
+    "placeholders": {
+      "seats": {}
+    }
+  },
+  "name": "Name",
+  "phone": "Phone",
+  "phoneMustBe8Digits": "Phone number must be exactly 8 digits.",
+  "playDurationHours": "Play duration (hours)",
+  "confirmBooking": "Confirm Booking",
+  "totalPriceLabel": "Total: {price}₮",
+  "@totalPriceLabel": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+  "bookingReceipt": "{center}\\nSeats: {seats}\\nHours: {hours}\\nPrice/hour: {pricePerHour}₮\\nTotal: {totalPrice}₮",
+  "@bookingReceipt": {
+    "placeholders": {
+      "center": {},
+      "seats": {},
+      "hours": {},
+      "pricePerHour": {},
+      "totalPrice": {}
+    }
+  },
+  "cancelBookingTitle": "Cancel Booking",
+  "cancelBookingQuestion": "Cancel booking for {center}?",
+  "@cancelBookingQuestion": {
+    "placeholders": {
+      "center": {}
+    }
+  },
+  "no": "No",
+  "yesCancel": "Yes, cancel",
+  "bookingCanceled": "Booking canceled.",
+  "bookingAlreadyCanceled": "Booking already canceled.",
+  "noBookingHistory": "No booking history yet.",
+  "statusCanceled": "Canceled",
+  "statusActive": "Active",
+  "customerLabel": "Customer: {name}",
+  "@customerLabel": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "durationLabel": "Duration: {hours} hour(s)",
+  "@durationLabel": {
+    "placeholders": {
+      "hours": {}
+    }
+  },
+  "seatsLabel": "Seats: {seats}",
+  "@seatsLabel": {
+    "placeholders": {
+      "seats": {}
+    }
+  },
+  "createdLabel": "Created: {date}",
+  "@createdLabel": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "canceledLabel": "Canceled: {date}",
+  "@canceledLabel": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "cancelBookingAction": "Cancel Booking",
+  "profileTitle": "Profile",
+  "profileNotSignedIn": "Not signed in",
+  "profileNoDisplayName": "No display name",
+  "profileUidLabel": "UID: {uid}",
+  "@profileUidLabel": {
+    "placeholders": {
+      "uid": {}
+    }
+  },
+  "profileDisplayNameLabel": "Display name",
+  "profileSaveButton": "Save profile",
+  "profileAvatarUpload": "Upload avatar",
+  "profileAvatarUpdated": "Avatar updated",
+  "profileAvatarUpdateFailed": "Failed to upload avatar",
+  "profileUpdated": "Profile updated",
+  "profileUpdateFailed": "Failed to update profile",
+  "logout": "Log out",
+  "profileLastSignInLabel": "Last sign-in: {date}",
+  "@profileLastSignInLabel": {
+    "placeholders": {
+      "date": {}
+    }
+  }
+}

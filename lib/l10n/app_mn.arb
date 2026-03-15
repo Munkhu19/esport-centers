@@ -1,0 +1,239 @@
+﻿{
+    "@@locale":  "mn",
+    "appTitle":  "E-Sport Төв",
+    "changeLanguage":  "Хэл солих",
+    "loginTitle":  "E-SPORT ТӨВ",
+    "username":  "Нэвтрэх нэр",
+    "email":  "И-мэйл",
+    "password":  "Нууц үг",
+    "confirmPassword":  "Нууц үг давтах",
+    "signIn":  "Нэвтрэх",
+    "signUp":  "Бүртгүүлэх",
+    "switchToSignUp":  "Бүртгэлгүй юу? Бүртгүүлэх",
+    "switchToSignIn":  "Бүртгэлтэй юу? Нэвтрэх",
+    "accountCreated":  "Бүртгэл амжилттай үүслээ. Нэвтэрч орно уу.",
+    "usernameAlreadyExists":  "Энэ и-мэйл аль хэдийн бүртгэлтэй байна.",
+    "passwordsDoNotMatch":  "Нууц үг хоорондоо таарахгүй байна.",
+    "authInvalidEmail":  "И-мэйл буруу байна.",
+    "authEmailPasswordNotEnabled":  "Firebase дээр Email/Password нэвтрэх арга идэвхгүй байна.",
+    "authUserDisabled":  "Энэ бүртгэл идэвхгүй болсон байна.",
+    "authTooManyRequests":  "Хэт олон оролдлого хийлээ. Түр хүлээгээд дахин оролдоно уу.",
+    "authApiKeyInvalid":  "Firebase API key энэ апп дээр буруу байна.",
+    "authFirebaseNotInitialized":  "Firebase инициализаци буруу байна.",
+    "authWeakPassword":  "Нууц үг хэт сул байна.",
+    "authNetworkError":  "Сүлжээний алдаа. Интернэтээ шалгана уу.",
+    "authUnknownError":  "Нэвтрэх үйлдэл амжилтгүй боллоо. Дахин оролдоно уу.",
+    "login":  "Нэвтрэх",
+    "invalidCredentials":  "Нэвтрэх нэр эсвэл нууц үг буруу байна",
+    "centersTitle":  "E-SPORT ТӨВҮҮД",
+    "homeTab":  "Нүүр",
+    "searchCenterHint":  "Төв хайх...",
+    "noCentersFound":  "Төв олдсонгүй",
+    "mapTitle":  "Төвүүдийн газрын зураг",
+    "mapTab":  "Газрын зураг",
+    "bookingHistoryTitle":  "Захиалгын түүх",
+    "addressLabel":  "Хаяг: {address}",
+    "@addressLabel":  {
+                          "placeholders":  {
+                                               "address":  {
+
+                                                           }
+                                           }
+                      },
+    "pcCountLabel":  "PC тоо: {count}",
+    "@pcCountLabel":  {
+                          "placeholders":  {
+                                               "count":  {
+
+                                                         }
+                                           }
+                      },
+    "pcSpecLabel":  "PC үзүүлэлт: {spec}",
+    "@pcSpecLabel":  {
+                         "placeholders":  {
+                                              "spec":  {
+
+                                                       }
+                                          }
+                     },
+    "pricePerHourLabel":  "Үнэ: {price}₮ / цаг",
+    "@pricePerHourLabel":  {
+                               "placeholders":  {
+                                                    "price":  {
+
+                                                              }
+                                                }
+                           },
+    "phoneLabel":  "Утас: {phone}",
+    "@phoneLabel":  {
+                        "placeholders":  {
+                                             "phone":  {
+
+                                                       }
+                                         }
+                    },
+    "selectPcSeats":  "PC суудал сонгох",
+    "makeBooking":  "Захиалга хийх",
+    "selectSeatsTitle":  "Суудал сонгох - {center}",
+    "@selectSeatsTitle":  {
+                              "placeholders":  {
+                                                   "center":  {
+
+                                                              }
+                                               }
+                          },
+    "bookingTitle":  "Захиалга",
+    "fillAllFields":  "Бүх талбарыг бөглөнө үү.",
+    "selectAtLeastOneSeat":  "Дор хаяж нэг PC суудал сонгоно уу.",
+    "invalidPlayDuration":  "Тоглох хугацаа 1-ээс их тоо байх ёстой.",
+    "bookingConfirmed":  "Захиалга баталгаажлаа",
+    "bookingSummary":  "{center}\\nСуудал: {seats}\\nЦаг: {time}",
+    "@bookingSummary":  {
+                            "placeholders":  {
+                                                 "center":  {
+
+                                                            },
+                                                 "seats":  {
+
+                                                           },
+                                                 "time":  {
+
+                                                          }
+                                             }
+                        },
+    "bookingReceipt":  "{center}\\nСуудал: {seats}\\nЦаг: {hours}\\nЦагийн үнэ: {pricePerHour}₮\\nНийт: {totalPrice}₮",
+    "@bookingReceipt":  {
+                            "placeholders":  {
+                                                 "center":  {
+
+                                                            },
+                                                 "seats":  {
+
+                                                           },
+                                                 "hours":  {
+
+                                                           },
+                                                 "pricePerHour":  {
+
+                                                                  },
+                                                 "totalPrice":  {
+
+                                                                }
+                                             }
+                        },
+    "ok":  "Ойлголоо",
+    "noneSelected":  "Сонгогдоогүй",
+    "centerLabel":  "Төв: {center}",
+    "@centerLabel":  {
+                         "placeholders":  {
+                                              "center":  {
+
+                                                         }
+                                          }
+                     },
+    "selectedSeatsLabel":  "Сонгосон суудал: {seats}",
+    "@selectedSeatsLabel":  {
+                                "placeholders":  {
+                                                     "seats":  {
+
+                                                               }
+                                                 }
+                            },
+    "name":  "Нэр",
+    "phone":  "Утас",
+    "phoneMustBe8Digits":  "Утасны дугаар 8 оронтой байх ёстой.",
+    "playDurationHours":  "Тоглох хугацаа (цаг)",
+    "confirmBooking":  "Захиалга батлах",
+    "totalPriceLabel":  "Нийт: {price}₮",
+    "@totalPriceLabel":  {
+                             "placeholders":  {
+                                                  "price":  {
+
+                                                            }
+                                              }
+                         },
+    "cancelBookingTitle":  "Захиалга цуцлах",
+    "cancelBookingQuestion":  "{center} төвийн захиалгыг цуцлах уу?",
+    "@cancelBookingQuestion":  {
+                                   "placeholders":  {
+                                                        "center":  {
+
+                                                                   }
+                                                    }
+                               },
+    "no":  "Үгүй",
+    "yesCancel":  "Тийм, цуцлах",
+    "bookingCanceled":  "Захиалга цуцлагдлаа.",
+    "bookingAlreadyCanceled":  "Энэ захиалга өмнө нь цуцлагдсан байна.",
+    "noBookingHistory":  "Захиалгын түүх хоосон байна.",
+    "statusCanceled":  "Цуцлагдсан",
+    "statusActive":  "Идэвхтэй",
+    "customerLabel":  "Захиалагч: {name}",
+    "@customerLabel":  {
+                           "placeholders":  {
+                                                "name":  {
+
+                                                         }
+                                            }
+                       },
+    "durationLabel":  "Хугацаа: {hours} цаг",
+    "@durationLabel":  {
+                           "placeholders":  {
+                                                "hours":  {
+
+                                                          }
+                                            }
+                       },
+    "seatsLabel":  "Суудал: {seats}",
+    "@seatsLabel":  {
+                        "placeholders":  {
+                                             "seats":  {
+
+                                                       }
+                                         }
+                    },
+    "createdLabel":  "Үүсгэсэн: {date}",
+    "@createdLabel":  {
+                          "placeholders":  {
+                                               "date":  {
+
+                                                        }
+                                           }
+                      },
+    "canceledLabel":  "Цуцалсан: {date}",
+    "@canceledLabel":  {
+                           "placeholders":  {
+                                                "date":  {
+
+                                                         }
+                                            }
+                       },
+    "cancelBookingAction":  "Захиалга цуцлах",
+    "profileTitle":  "Профайл",
+    "profileNotSignedIn":  "Нэвтрээгүй байна",
+    "profileNoDisplayName":  "Харуулах нэр оноогоүй",
+    "profileUidLabel":  "UID: {uid}",
+    "@profileUidLabel":  {
+                             "placeholders":  {
+                                                  "uid":  {
+
+                                                          }
+                                              }
+                         },
+    "profileDisplayNameLabel":  "Харуулах нэр",
+    "profileSaveButton":  "Профайл хадгалах",
+    "profileUpdated":  "Профайл амжилттай шинэчлэгдлээ",
+    "profileUpdateFailed":  "Профайл шинэчлэхэд алдаа гарлаа",
+    "profileLastSignInLabel":  "Сүүлд нэвтэрсэн: {date}",
+    "@profileLastSignInLabel":  {
+                                    "placeholders":  {
+                                                         "date":  {
+
+                                                                  }
+                                                     }
+                                },
+    "logout":  "Гарах",
+    "profileAvatarUpload":  "Аватар оруулах",
+    "profileAvatarUpdated":  "Аватар амжилттай шинэчлэгдлээ",
+    "profileAvatarUpdateFailed":  "Аватар оруулахад алдаа гарлаа"
+}
