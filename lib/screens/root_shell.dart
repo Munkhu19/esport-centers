@@ -6,15 +6,19 @@ import 'home_screen.dart';
 import 'map_screen.dart';
 import 'profile_screen.dart';
 
+final ValueNotifier<int> rootShellTabNotifier = ValueNotifier<int>(0);
+
 class RootShell extends StatefulWidget {
-  const RootShell({super.key});
+  const RootShell({super.key, this.initialIndex = 0});
+
+  final int initialIndex;
 
   @override
   State<RootShell> createState() => _RootShellState();
 }
 
 class _RootShellState extends State<RootShell> {
-  int _currentIndex = 0;
+  late int _currentIndex;
 
   late final List<Widget> _tabs = const [
     HomeScreen(),
@@ -24,10 +28,32 @@ class _RootShellState extends State<RootShell> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    rootShellTabNotifier.value = _currentIndex;
+    rootShellTabNotifier.addListener(_handleTabChange);
+  }
+
+  @override
+  void dispose() {
+    rootShellTabNotifier.removeListener(_handleTabChange);
+    super.dispose();
+  }
+
+  void _handleTabChange() {
+    if (!mounted || _currentIndex == rootShellTabNotifier.value) return;
+    setState(() {
+      _currentIndex = rootShellTabNotifier.value;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
+      extendBody: true,
       body: IndexedStack(
         index: _currentIndex,
         children: _tabs,
@@ -38,8 +64,8 @@ class _RootShellState extends State<RootShell> {
           borderRadius: BorderRadius.circular(28),
           child: NavigationBar(
             selectedIndex: _currentIndex,
-            backgroundColor: const Color(0xFF111827),
-            indicatorColor: const Color(0xFF7C3AED).withValues(alpha: 0.22),
+            backgroundColor: const Color(0xFF0C1424).withValues(alpha: 0.86),
+            indicatorColor: const Color(0xFF00E5FF).withValues(alpha: 0.18),
             labelBehavior:
                 NavigationDestinationLabelBehavior.onlyShowSelected,
             destinations: [
@@ -69,6 +95,7 @@ class _RootShellState extends State<RootShell> {
               ),
             ],
             onDestinationSelected: (index) {
+              rootShellTabNotifier.value = index;
               setState(() {
                 _currentIndex = index;
               });

@@ -5,21 +5,17 @@ import '../l10n/app_localizations.dart';
 import '../models/booking_record.dart';
 import '../models/center.dart';
 import '../widgets/language_toggle_button.dart';
-import 'booking_screen.dart';
 
-class SeatScreen extends StatefulWidget {
+class OwnerSeatManagerScreen extends StatefulWidget {
+  const OwnerSeatManagerScreen({super.key, required this.center});
+
   final EsportCenter center;
 
-  const SeatScreen({super.key, required this.center});
-
   @override
-  State<SeatScreen> createState() => _SeatScreenState();
+  State<OwnerSeatManagerScreen> createState() => _OwnerSeatManagerScreenState();
 }
 
-class _SeatScreenState extends State<SeatScreen> {
-  final TextEditingController _durationController = TextEditingController(
-    text: '1',
-  );
+class _OwnerSeatManagerScreenState extends State<OwnerSeatManagerScreen> {
   late DateTime _previewStartAt;
 
   @override
@@ -31,7 +27,6 @@ class _SeatScreenState extends State<SeatScreen> {
 
   @override
   void dispose() {
-    _durationController.dispose();
     super.dispose();
   }
 
@@ -76,7 +71,7 @@ class _SeatScreenState extends State<SeatScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.selectSeatsTitle(widget.center.name)),
+        title: Text(l10n.ownerSeatManagerTitle(widget.center.name)),
         actions: const [LanguageToggleButton()],
       ),
       body: StreamBuilder<List<BookingRecord>>(
@@ -87,11 +82,9 @@ class _SeatScreenState extends State<SeatScreen> {
             stream: BookingStore.blockedSeatsStream(widget.center.id),
             initialData: BookingStore.blockedSeats(widget.center.id),
             builder: (context, blockedSnapshot) {
-              final blockedSeats = blockedSnapshot.data ?? <int>{};
-              final selectedSeats = BookingStore.selectedSeats(widget.center.id);
-              final durationHours =
-                  int.tryParse(_durationController.text.trim()) ?? 1;
-              final scheduledBookedSeats = durationHours <= 0
+              final blockedSeats = blockedSnapshot.data ?? const <int>{};
+              const durationHours = 1;
+              final bookedSeats = durationHours <= 0
                   ? <int>{}
                   : BookingStore.scheduledBookedSeats(
                       centerId: widget.center.id,
@@ -102,7 +95,7 @@ class _SeatScreenState extends State<SeatScreen> {
               return Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                    padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
                         InkWell(
@@ -122,34 +115,20 @@ class _SeatScreenState extends State<SeatScreen> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        TextField(
-                          controller: _durationController,
-                          keyboardType: TextInputType.number,
-                          onChanged: (_) => setState(() {}),
-                          decoration: InputDecoration(
-                            labelText: l10n.playDurationHours,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Wrap(
-                          spacing: 12,
-                          runSpacing: 8,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             _Legend(
-                              color: Colors.grey.shade300,
-                              label: l10n.ownerSeatAvailable,
-                            ),
-                            _Legend(
                               color: Colors.green,
-                              label: l10n.seatSelectedLabel,
-                            ),
-                            _Legend(
-                              color: Colors.red,
-                              label: l10n.seatUnavailableForTime,
+                              label: l10n.ownerSeatAvailable,
                             ),
                             _Legend(
                               color: Colors.orange,
                               label: l10n.ownerSeatBlocked,
+                            ),
+                            _Legend(
+                              color: Colors.red,
+                              label: l10n.ownerSeatBooked,
                             ),
                           ],
                         ),
@@ -166,31 +145,24 @@ class _SeatScreenState extends State<SeatScreen> {
                         mainAxisSpacing: 10,
                       ),
                       itemBuilder: (context, index) {
+                        final isBooked = bookedSeats.contains(index);
                         final isBlocked = blockedSeats.contains(index);
-                        final isBookedForSchedule =
-                            scheduledBookedSeats.contains(index);
-                        final isSelected = selectedSeats.contains(index);
-
-                        final Color color;
-                        if (isBlocked) {
-                          color = Colors.orange;
-                        } else if (isBookedForSchedule) {
-                          color = Colors.red;
-                        } else if (isSelected) {
-                          color = Colors.green;
-                        } else {
-                          color = Colors.grey.shade300;
-                        }
+                        final color = isBooked
+                            ? Colors.red
+                            : isBlocked
+                                ? Colors.orange
+                                : Colors.green;
 
                         return GestureDetector(
-                          onTap: () {
-                            if (isBlocked || isBookedForSchedule || durationHours <= 0) {
-                              return;
-                            }
-                            setState(() {
-                              BookingStore.toggleSeat(widget.center.id, index);
-                            });
-                          },
+                          onTap: isBooked
+                              ? null
+                              : () {
+                                  BookingStore.toggleBlockedSeat(
+                                    widget.center.id,
+                                    index,
+                                  );
+                                  setState(() {});
+                                },
                           child: Container(
                             decoration: BoxDecoration(
                               color: color,
@@ -211,25 +183,11 @@ class _SeatScreenState extends State<SeatScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: durationHours <= 0
-                            ? null
-                            : () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => BookingScreen(
-                                      center: widget.center,
-                                      initialStartAt: _previewStartAt,
-                                      initialDurationHours: durationHours,
-                                    ),
-                                  ),
-                                );
-                              },
-                        child: Text(l10n.confirmBooking),
-                      ),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    child: Text(
+                      l10n.ownerSeatManagerHint,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white70),
                     ),
                   ),
                 ],
@@ -243,10 +201,7 @@ class _SeatScreenState extends State<SeatScreen> {
 }
 
 class _Legend extends StatelessWidget {
-  const _Legend({
-    required this.color,
-    required this.label,
-  });
+  const _Legend({required this.color, required this.label});
 
   final Color color;
   final String label;

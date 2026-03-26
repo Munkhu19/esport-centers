@@ -42,7 +42,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get switchToSignIn => 'Already have an account? Sign in';
 
   @override
-  String get accountCreated => 'Account created successfully. Please sign in.';
+  String get ownerSignUpOption => 'Register with owner request';
+
+  @override
+  String get ownerSignUpHint => 'This does not create an owner account immediately. Your account will be created as pending until admin approval.';
+
+  @override
+  String get accountCreated => 'Account created successfully.';
 
   @override
   String get usernameAlreadyExists => 'This email is already in use.';
@@ -177,6 +183,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get bookingStartTime => 'Start time';
+
+  @override
+  String bookingTimeLabel(Object time) {
+    return 'Time: $time';
+  }
+
+  @override
   String get name => 'Name';
 
   @override
@@ -187,6 +201,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playDurationHours => 'Play duration (hours)';
+
+  @override
+  String get invalidStartTime => 'Start time must be in the future.';
 
   @override
   String get confirmBooking => 'Confirm Booking';
@@ -220,6 +237,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookingAlreadyCanceled => 'Booking already canceled.';
+
+  @override
+  String get clearCanceledBookingsTitle => 'Clear canceled bookings';
+
+  @override
+  String get clearCanceledBookingsMessage => 'Remove all canceled bookings from your history?';
+
+  @override
+  String get clearCanceledBookingsAction => 'Clear canceled';
+
+  @override
+  String get canceledBookingsCleared => 'Canceled bookings cleared.';
 
   @override
   String get noBookingHistory => 'No booking history yet.';
@@ -294,10 +323,371 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileUpdateFailed => 'Failed to update profile';
 
   @override
+  String get profileAccountSection => 'Account';
+
+  @override
+  String get profileEditSection => 'Edit profile';
+
+  @override
+  String get profileActivitySection => 'Account activity';
+
+  @override
+  String get profileSettingsTitle => 'Profile settings';
+
+  @override
+  String get profileRoleLabel => 'Role';
+
+  @override
+  String get profileUidTitle => 'UID';
+
+  @override
+  String get profileCreatedAtLabel => 'Created at';
+
+  @override
+  String get profileLastSignInTitle => 'Last sign-in';
+
+  @override
+  String get profileCopyAction => 'Copy';
+
+  @override
+  String get profileEmailCopied => 'Email copied';
+
+  @override
+  String get profileUidCopied => 'UID copied';
+
+  @override
+  String get profileChangePassword => 'Change password';
+
+  @override
+  String profilePasswordResetSent(Object email) {
+    return 'Password reset email sent to $email';
+  }
+
+  @override
+  String get profileEmailVerificationTitle => 'Email verification';
+
+  @override
+  String get profileEmailVerified => 'Verified';
+
+  @override
+  String get profileEmailNotVerified => 'Not verified';
+
+  @override
+  String get profileSendVerification => 'Send verification';
+
+  @override
+  String get profileRefreshVerification => 'Refresh';
+
+  @override
+  String profileVerificationSent(Object email) {
+    return 'Verification email sent to $email';
+  }
+
+  @override
   String get logout => 'Log out';
 
   @override
   String profileLastSignInLabel(Object date) {
     return 'Last sign-in: $date';
+  }
+
+  @override
+  String get ownerRoleCustomer => 'Customer';
+
+  @override
+  String get adminRoleLabel => 'Admin';
+
+  @override
+  String get ownerRolePending => 'Owner pending';
+
+  @override
+  String get ownerRoleOwner => 'Owner';
+
+  @override
+  String get ownerApplyTitle => 'Apply as owner';
+
+  @override
+  String get ownerApplyMessage => 'Send a request to become an owner? Until approval, you will not have owner access.';
+
+  @override
+  String get ownerApplyAction => 'Apply as owner';
+
+  @override
+  String get ownerApplySubmitted => 'Owner request submitted. Please wait for approval.';
+
+  @override
+  String get ownerApplicationFormTitle => 'Owner application';
+
+  @override
+  String get ownerApplicationFormSubtitle => 'Submit your center details for admin review.';
+
+  @override
+  String get ownerApplicationCenterName => 'Center name';
+
+  @override
+  String get ownerApplicationPhone => 'Contact phone';
+
+  @override
+  String get ownerApplicationAddress => 'Center address';
+
+  @override
+  String get ownerApplicationLink => 'Facebook page or Google Maps link';
+
+  @override
+  String get ownerApplicationNote => 'Additional note';
+
+  @override
+  String get ownerApplicationSubmit => 'Submit owner request';
+
+  @override
+  String get ownerApplicationRequiredFields => 'Please fill center name, phone, and address.';
+
+  @override
+  String get ownerPendingTitle => 'Owner request pending';
+
+  @override
+  String get ownerPendingHeading => 'Your owner request is under review';
+
+  @override
+  String get ownerPendingMessage => 'We received your request. You will get owner access after approval.';
+
+  @override
+  String get ownerPendingInline => 'Your owner request has been submitted and is waiting for approval.';
+
+  @override
+  String get adminDashboardTitle => 'Admin Dashboard';
+
+  @override
+  String get adminCentersTitle => 'All Centers';
+
+  @override
+  String get adminUsersTitle => 'Users';
+
+  @override
+  String get adminUsersEmpty => 'No users found.';
+
+  @override
+  String get adminPendingRequests => 'Pending requests';
+
+  @override
+  String get adminOwnersCount => 'Owners';
+
+  @override
+  String get adminCustomersCount => 'Customers';
+
+  @override
+  String get adminAdminsCount => 'Admins';
+
+  @override
+  String get adminCentersCount => 'Centers';
+
+  @override
+  String get adminBookingsCount => 'Bookings';
+
+  @override
+  String get adminRevenueTotal => 'Revenue';
+
+  @override
+  String get ownerRequestsTitle => 'Owner requests';
+
+  @override
+  String get ownerRequestsEmpty => 'No pending owner requests.';
+
+  @override
+  String get ownerApproveAction => 'Approve';
+
+  @override
+  String get ownerRejectAction => 'Reject';
+
+  @override
+  String ownerRequestApproved(Object email) {
+    return 'Approved owner request for $email';
+  }
+
+  @override
+  String ownerRequestRejected(Object email) {
+    return 'Rejected owner request for $email';
+  }
+
+  @override
+  String get adminDeleteUserTitle => 'Delete user data';
+
+  @override
+  String adminDeleteUserMessage(Object email) {
+    return 'Delete all app data for $email? Firebase Authentication user deletion still needs to be done separately.';
+  }
+
+  @override
+  String get adminDeleteUserAction => 'Delete user data';
+
+  @override
+  String get adminDeleteUserProtected => 'Protected admin account';
+
+  @override
+  String adminUserDeleted(Object email) {
+    return 'App data deleted for $email.';
+  }
+
+  @override
+  String get adminSetAsOwner => 'Set as owner';
+
+  @override
+  String get adminSetAsCustomer => 'Set as customer';
+
+  @override
+  String adminUserPromotedOwner(Object email) {
+    return '$email is now an owner.';
+  }
+
+  @override
+  String adminUserSetCustomer(Object email) {
+    return '$email is now a customer.';
+  }
+
+  @override
+  String get ownerDashboardTitle => 'Owner Dashboard';
+
+  @override
+  String get ownerCentersTitle => 'My Centers';
+
+  @override
+  String get ownerBookingsTitle => 'Center Bookings';
+
+  @override
+  String get ownerCentersCount => 'Owned centers';
+
+  @override
+  String get ownerBookingsCount => 'Bookings';
+
+  @override
+  String get ownerRevenueTotal => 'Revenue';
+
+  @override
+  String get ownerOccupiedSeats => 'Occupied seats';
+
+  @override
+  String get ownerRecentBookings => 'Recent bookings';
+
+  @override
+  String get ownerNoBookings => 'No bookings for your centers yet.';
+
+  @override
+  String get ownerNoBookingsForFilter => 'No bookings match this filter.';
+
+  @override
+  String get ownerClearBookingsTitle => 'Clear canceled bookings';
+
+  @override
+  String get ownerClearBookingsMessage => 'Clear canceled bookings for your centers?';
+
+  @override
+  String get ownerClearBookingsAction => 'Clear canceled';
+
+  @override
+  String get ownerBookingsCleared => 'Canceled bookings cleared.';
+
+  @override
+  String get ownerFilterAll => 'All';
+
+  @override
+  String get ownerNoCenters => 'You do not own any centers yet.';
+
+  @override
+  String get ownerAddCenter => 'Add center';
+
+  @override
+  String get ownerEditCenter => 'Edit center';
+
+  @override
+  String get ownerSaveCenter => 'Save center';
+
+  @override
+  String get ownerDeleteCenterTitle => 'Delete center';
+
+  @override
+  String ownerDeleteCenterMessage(Object center) {
+    return 'Delete $center completely? This will also remove its bookings and seat states.';
+  }
+
+  @override
+  String get ownerDeleteCenterAction => 'Delete center';
+
+  @override
+  String ownerCenterDeleted(Object center) {
+    return '$center deleted.';
+  }
+
+  @override
+  String get ownerInvalidCenterData => 'Please fill all center fields correctly.';
+
+  @override
+  String get ownerCenterAddress => 'Center address';
+
+  @override
+  String get ownerCenterPcCount => 'PC count';
+
+  @override
+  String get ownerCenterPcSpec => 'PC spec';
+
+  @override
+  String get ownerCenterPrice => 'Price per hour';
+
+  @override
+  String get ownerCenterLatitude => 'Latitude';
+
+  @override
+  String get ownerCenterLongitude => 'Longitude';
+
+  @override
+  String get ownerCenterProfileImageLabel => 'Center profile image';
+
+  @override
+  String get ownerCenterAddProfileImage => 'Add profile image';
+
+  @override
+  String get ownerCenterChangeProfileImage => 'Change profile image';
+
+  @override
+  String get ownerCenterRemoveProfileImage => 'Remove profile image';
+
+  @override
+  String get ownerCenterGalleryLabel => 'Center gallery images';
+
+  @override
+  String get ownerCenterAddImages => 'Add gallery images';
+
+  @override
+  String get ownerCenterRemoveSelectedImages => 'Delete selected';
+
+  @override
+  String get ownerCenterImageSelectionHint => 'Long press images to select one or many, then delete them.';
+
+  @override
+  String get ownerCenterImageFailed => 'Failed to pick image.';
+
+  @override
+  String get ownerSeatManagerShort => 'Seat manager';
+
+  @override
+  String get ownerSeatManagerHint => 'Tap a seat to block or unblock it. Booked seats cannot be changed.';
+
+  @override
+  String get ownerSeatAvailable => 'Available';
+
+  @override
+  String get ownerSeatBlocked => 'Blocked';
+
+  @override
+  String get ownerSeatBooked => 'Booked';
+
+  @override
+  String get seatSelectedLabel => 'Selected';
+
+  @override
+  String get seatUnavailableForTime => 'Unavailable for time';
+
+  @override
+  String ownerSeatManagerTitle(Object center) {
+    return 'Seat Manager - $center';
   }
 }

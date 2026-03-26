@@ -161,10 +161,22 @@ abstract class AppLocalizations {
   /// **'Already have an account? Sign in'**
   String get switchToSignIn;
 
+  /// No description provided for @ownerSignUpOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Register with owner request'**
+  String get ownerSignUpOption;
+
+  /// No description provided for @ownerSignUpHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This does not create an owner account immediately. Your account will be created as pending until admin approval.'**
+  String get ownerSignUpHint;
+
   /// No description provided for @accountCreated.
   ///
   /// In en, this message translates to:
-  /// **'Account created successfully. Please sign in.'**
+  /// **'Account created successfully.'**
   String get accountCreated;
 
   /// No description provided for @usernameAlreadyExists.
@@ -395,6 +407,18 @@ abstract class AppLocalizations {
   /// **'Selected seats: {seats}'**
   String selectedSeatsLabel(Object seats);
 
+  /// No description provided for @bookingStartTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Start time'**
+  String get bookingStartTime;
+
+  /// No description provided for @bookingTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time: {time}'**
+  String bookingTimeLabel(Object time);
+
   /// No description provided for @name.
   ///
   /// In en, this message translates to:
@@ -418,6 +442,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Play duration (hours)'**
   String get playDurationHours;
+
+  /// No description provided for @invalidStartTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Start time must be in the future.'**
+  String get invalidStartTime;
 
   /// No description provided for @confirmBooking.
   ///
@@ -472,6 +502,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Booking already canceled.'**
   String get bookingAlreadyCanceled;
+
+  /// No description provided for @clearCanceledBookingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear canceled bookings'**
+  String get clearCanceledBookingsTitle;
+
+  /// No description provided for @clearCanceledBookingsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove all canceled bookings from your history?'**
+  String get clearCanceledBookingsMessage;
+
+  /// No description provided for @clearCanceledBookingsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear canceled'**
+  String get clearCanceledBookingsAction;
+
+  /// No description provided for @canceledBookingsCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Canceled bookings cleared.'**
+  String get canceledBookingsCleared;
 
   /// No description provided for @noBookingHistory.
   ///
@@ -593,6 +647,120 @@ abstract class AppLocalizations {
   /// **'Failed to update profile'**
   String get profileUpdateFailed;
 
+  /// No description provided for @profileAccountSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get profileAccountSection;
+
+  /// No description provided for @profileEditSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get profileEditSection;
+
+  /// No description provided for @profileActivitySection.
+  ///
+  /// In en, this message translates to:
+  /// **'Account activity'**
+  String get profileActivitySection;
+
+  /// No description provided for @profileSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile settings'**
+  String get profileSettingsTitle;
+
+  /// No description provided for @profileRoleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get profileRoleLabel;
+
+  /// No description provided for @profileUidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'UID'**
+  String get profileUidTitle;
+
+  /// No description provided for @profileCreatedAtLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Created at'**
+  String get profileCreatedAtLabel;
+
+  /// No description provided for @profileLastSignInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sign-in'**
+  String get profileLastSignInTitle;
+
+  /// No description provided for @profileCopyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get profileCopyAction;
+
+  /// No description provided for @profileEmailCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Email copied'**
+  String get profileEmailCopied;
+
+  /// No description provided for @profileUidCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'UID copied'**
+  String get profileUidCopied;
+
+  /// No description provided for @profileChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get profileChangePassword;
+
+  /// No description provided for @profilePasswordResetSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset email sent to {email}'**
+  String profilePasswordResetSent(Object email);
+
+  /// No description provided for @profileEmailVerificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Email verification'**
+  String get profileEmailVerificationTitle;
+
+  /// No description provided for @profileEmailVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get profileEmailVerified;
+
+  /// No description provided for @profileEmailNotVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not verified'**
+  String get profileEmailNotVerified;
+
+  /// No description provided for @profileSendVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Send verification'**
+  String get profileSendVerification;
+
+  /// No description provided for @profileRefreshVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get profileRefreshVerification;
+
+  /// No description provided for @profileVerificationSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification email sent to {email}'**
+  String profileVerificationSent(Object email);
+
   /// No description provided for @logout.
   ///
   /// In en, this message translates to:
@@ -604,6 +772,570 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last sign-in: {date}'**
   String profileLastSignInLabel(Object date);
+
+  /// No description provided for @ownerRoleCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get ownerRoleCustomer;
+
+  /// No description provided for @adminRoleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get adminRoleLabel;
+
+  /// No description provided for @ownerRolePending.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner pending'**
+  String get ownerRolePending;
+
+  /// No description provided for @ownerRoleOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner'**
+  String get ownerRoleOwner;
+
+  /// No description provided for @ownerApplyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply as owner'**
+  String get ownerApplyTitle;
+
+  /// No description provided for @ownerApplyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a request to become an owner? Until approval, you will not have owner access.'**
+  String get ownerApplyMessage;
+
+  /// No description provided for @ownerApplyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply as owner'**
+  String get ownerApplyAction;
+
+  /// No description provided for @ownerApplySubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner request submitted. Please wait for approval.'**
+  String get ownerApplySubmitted;
+
+  /// No description provided for @ownerApplicationFormTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner application'**
+  String get ownerApplicationFormTitle;
+
+  /// No description provided for @ownerApplicationFormSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit your center details for admin review.'**
+  String get ownerApplicationFormSubtitle;
+
+  /// No description provided for @ownerApplicationCenterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Center name'**
+  String get ownerApplicationCenterName;
+
+  /// No description provided for @ownerApplicationPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact phone'**
+  String get ownerApplicationPhone;
+
+  /// No description provided for @ownerApplicationAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Center address'**
+  String get ownerApplicationAddress;
+
+  /// No description provided for @ownerApplicationLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Facebook page or Google Maps link'**
+  String get ownerApplicationLink;
+
+  /// No description provided for @ownerApplicationNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional note'**
+  String get ownerApplicationNote;
+
+  /// No description provided for @ownerApplicationSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit owner request'**
+  String get ownerApplicationSubmit;
+
+  /// No description provided for @ownerApplicationRequiredFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill center name, phone, and address.'**
+  String get ownerApplicationRequiredFields;
+
+  /// No description provided for @ownerPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner request pending'**
+  String get ownerPendingTitle;
+
+  /// No description provided for @ownerPendingHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Your owner request is under review'**
+  String get ownerPendingHeading;
+
+  /// No description provided for @ownerPendingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We received your request. You will get owner access after approval.'**
+  String get ownerPendingMessage;
+
+  /// No description provided for @ownerPendingInline.
+  ///
+  /// In en, this message translates to:
+  /// **'Your owner request has been submitted and is waiting for approval.'**
+  String get ownerPendingInline;
+
+  /// No description provided for @adminDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Dashboard'**
+  String get adminDashboardTitle;
+
+  /// No description provided for @adminCentersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All Centers'**
+  String get adminCentersTitle;
+
+  /// No description provided for @adminUsersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Users'**
+  String get adminUsersTitle;
+
+  /// No description provided for @adminUsersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No users found.'**
+  String get adminUsersEmpty;
+
+  /// No description provided for @adminPendingRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending requests'**
+  String get adminPendingRequests;
+
+  /// No description provided for @adminOwnersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Owners'**
+  String get adminOwnersCount;
+
+  /// No description provided for @adminCustomersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers'**
+  String get adminCustomersCount;
+
+  /// No description provided for @adminAdminsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Admins'**
+  String get adminAdminsCount;
+
+  /// No description provided for @adminCentersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Centers'**
+  String get adminCentersCount;
+
+  /// No description provided for @adminBookingsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings'**
+  String get adminBookingsCount;
+
+  /// No description provided for @adminRevenueTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue'**
+  String get adminRevenueTotal;
+
+  /// No description provided for @ownerRequestsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner requests'**
+  String get ownerRequestsTitle;
+
+  /// No description provided for @ownerRequestsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending owner requests.'**
+  String get ownerRequestsEmpty;
+
+  /// No description provided for @ownerApproveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get ownerApproveAction;
+
+  /// No description provided for @ownerRejectAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get ownerRejectAction;
+
+  /// No description provided for @ownerRequestApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved owner request for {email}'**
+  String ownerRequestApproved(Object email);
+
+  /// No description provided for @ownerRequestRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected owner request for {email}'**
+  String ownerRequestRejected(Object email);
+
+  /// No description provided for @adminDeleteUserTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete user data'**
+  String get adminDeleteUserTitle;
+
+  /// No description provided for @adminDeleteUserMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all app data for {email}? Firebase Authentication user deletion still needs to be done separately.'**
+  String adminDeleteUserMessage(Object email);
+
+  /// No description provided for @adminDeleteUserAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete user data'**
+  String get adminDeleteUserAction;
+
+  /// No description provided for @adminDeleteUserProtected.
+  ///
+  /// In en, this message translates to:
+  /// **'Protected admin account'**
+  String get adminDeleteUserProtected;
+
+  /// No description provided for @adminUserDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'App data deleted for {email}.'**
+  String adminUserDeleted(Object email);
+
+  /// No description provided for @adminSetAsOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Set as owner'**
+  String get adminSetAsOwner;
+
+  /// No description provided for @adminSetAsCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Set as customer'**
+  String get adminSetAsCustomer;
+
+  /// No description provided for @adminUserPromotedOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'{email} is now an owner.'**
+  String adminUserPromotedOwner(Object email);
+
+  /// No description provided for @adminUserSetCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'{email} is now a customer.'**
+  String adminUserSetCustomer(Object email);
+
+  /// No description provided for @ownerDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner Dashboard'**
+  String get ownerDashboardTitle;
+
+  /// No description provided for @ownerCentersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Centers'**
+  String get ownerCentersTitle;
+
+  /// No description provided for @ownerBookingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Center Bookings'**
+  String get ownerBookingsTitle;
+
+  /// No description provided for @ownerCentersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Owned centers'**
+  String get ownerCentersCount;
+
+  /// No description provided for @ownerBookingsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings'**
+  String get ownerBookingsCount;
+
+  /// No description provided for @ownerRevenueTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue'**
+  String get ownerRevenueTotal;
+
+  /// No description provided for @ownerOccupiedSeats.
+  ///
+  /// In en, this message translates to:
+  /// **'Occupied seats'**
+  String get ownerOccupiedSeats;
+
+  /// No description provided for @ownerRecentBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent bookings'**
+  String get ownerRecentBookings;
+
+  /// No description provided for @ownerNoBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings for your centers yet.'**
+  String get ownerNoBookings;
+
+  /// No description provided for @ownerNoBookingsForFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings match this filter.'**
+  String get ownerNoBookingsForFilter;
+
+  /// No description provided for @ownerClearBookingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear canceled bookings'**
+  String get ownerClearBookingsTitle;
+
+  /// No description provided for @ownerClearBookingsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear canceled bookings for your centers?'**
+  String get ownerClearBookingsMessage;
+
+  /// No description provided for @ownerClearBookingsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear canceled'**
+  String get ownerClearBookingsAction;
+
+  /// No description provided for @ownerBookingsCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Canceled bookings cleared.'**
+  String get ownerBookingsCleared;
+
+  /// No description provided for @ownerFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get ownerFilterAll;
+
+  /// No description provided for @ownerNoCenters.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not own any centers yet.'**
+  String get ownerNoCenters;
+
+  /// No description provided for @ownerAddCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Add center'**
+  String get ownerAddCenter;
+
+  /// No description provided for @ownerEditCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit center'**
+  String get ownerEditCenter;
+
+  /// No description provided for @ownerSaveCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Save center'**
+  String get ownerSaveCenter;
+
+  /// No description provided for @ownerDeleteCenterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete center'**
+  String get ownerDeleteCenterTitle;
+
+  /// No description provided for @ownerDeleteCenterMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {center} completely? This will also remove its bookings and seat states.'**
+  String ownerDeleteCenterMessage(Object center);
+
+  /// No description provided for @ownerDeleteCenterAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete center'**
+  String get ownerDeleteCenterAction;
+
+  /// No description provided for @ownerCenterDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'{center} deleted.'**
+  String ownerCenterDeleted(Object center);
+
+  /// No description provided for @ownerInvalidCenterData.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill all center fields correctly.'**
+  String get ownerInvalidCenterData;
+
+  /// No description provided for @ownerCenterAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Center address'**
+  String get ownerCenterAddress;
+
+  /// No description provided for @ownerCenterPcCount.
+  ///
+  /// In en, this message translates to:
+  /// **'PC count'**
+  String get ownerCenterPcCount;
+
+  /// No description provided for @ownerCenterPcSpec.
+  ///
+  /// In en, this message translates to:
+  /// **'PC spec'**
+  String get ownerCenterPcSpec;
+
+  /// No description provided for @ownerCenterPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per hour'**
+  String get ownerCenterPrice;
+
+  /// No description provided for @ownerCenterLatitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Latitude'**
+  String get ownerCenterLatitude;
+
+  /// No description provided for @ownerCenterLongitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Longitude'**
+  String get ownerCenterLongitude;
+
+  /// No description provided for @ownerCenterProfileImageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Center profile image'**
+  String get ownerCenterProfileImageLabel;
+
+  /// No description provided for @ownerCenterAddProfileImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add profile image'**
+  String get ownerCenterAddProfileImage;
+
+  /// No description provided for @ownerCenterChangeProfileImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Change profile image'**
+  String get ownerCenterChangeProfileImage;
+
+  /// No description provided for @ownerCenterRemoveProfileImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove profile image'**
+  String get ownerCenterRemoveProfileImage;
+
+  /// No description provided for @ownerCenterGalleryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Center gallery images'**
+  String get ownerCenterGalleryLabel;
+
+  /// No description provided for @ownerCenterAddImages.
+  ///
+  /// In en, this message translates to:
+  /// **'Add gallery images'**
+  String get ownerCenterAddImages;
+
+  /// No description provided for @ownerCenterRemoveSelectedImages.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete selected'**
+  String get ownerCenterRemoveSelectedImages;
+
+  /// No description provided for @ownerCenterImageSelectionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Long press images to select one or many, then delete them.'**
+  String get ownerCenterImageSelectionHint;
+
+  /// No description provided for @ownerCenterImageFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to pick image.'**
+  String get ownerCenterImageFailed;
+
+  /// No description provided for @ownerSeatManagerShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Seat manager'**
+  String get ownerSeatManagerShort;
+
+  /// No description provided for @ownerSeatManagerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a seat to block or unblock it. Booked seats cannot be changed.'**
+  String get ownerSeatManagerHint;
+
+  /// No description provided for @ownerSeatAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get ownerSeatAvailable;
+
+  /// No description provided for @ownerSeatBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get ownerSeatBlocked;
+
+  /// No description provided for @ownerSeatBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get ownerSeatBooked;
+
+  /// No description provided for @seatSelectedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get seatSelectedLabel;
+
+  /// No description provided for @seatUnavailableForTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable for time'**
+  String get seatUnavailableForTime;
+
+  /// No description provided for @ownerSeatManagerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Seat Manager - {center}'**
+  String ownerSeatManagerTitle(Object center);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

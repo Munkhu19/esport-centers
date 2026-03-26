@@ -17,6 +17,10 @@ class SeatSyncService {
     return BookingStore.bookedSeatsStream(centerId);
   }
 
+  static Stream<Set<int>> blockedSeatsStream({required String centerId}) {
+    return BookingStore.blockedSeatsStream(centerId);
+  }
+
   static Future<BookingRecord> confirmBooking({
     required String centerId,
     required String centerName,
@@ -24,12 +28,17 @@ class SeatSyncService {
     required String phone,
     required int durationHours,
     required int pricePerHour,
+    required DateTime startAt,
     required List<int> seatIndexes,
   }) async {
     final booked = BookingStore.bookedSeats(centerId);
+    final blocked = BookingStore.blockedSeats(centerId);
     for (final seat in seatIndexes) {
       if (booked.contains(seat)) {
         throw SeatUnavailableException('PC ${seat + 1} is already booked.');
+      }
+      if (blocked.contains(seat)) {
+        throw SeatUnavailableException('PC ${seat + 1} is blocked.');
       }
     }
 
@@ -40,13 +49,14 @@ class SeatSyncService {
 
     final user = firebaseAvailable ? FirebaseAuth.instance.currentUser : null;
 
-    return BookingStore.confirmBooking(
+    return await BookingStore.confirmBooking(
       centerId: centerId,
       centerName: centerName,
       customerName: customerName,
       phone: phone,
       durationHours: durationHours,
       pricePerHour: pricePerHour,
+      startAt: startAt,
       createdByUid: user?.uid,
       createdByEmail: user?.email,
     );
@@ -54,15 +64,27 @@ class SeatSyncService {
 
   static Stream<List<BookingRecord>> bookingHistoryStream() {
     if (!firebaseAvailable) {
-      return Stream<List<BookingRecord>>.value(BookingStore.bookingHistory());
+      return BookingStore.bookingHistoryStream().map(
+        (_) => BookingStore.bookingHistory(),
+      );
     }
 
     final user = FirebaseAuth.instance.currentUser;
-    return Stream<List<BookingRecord>>.value(
-      BookingStore.bookingHistory(
+    return BookingStore.bookingHistoryStream().map(
+      (_) => BookingStore.bookingHistory(
         createdByUid: user?.uid,
         createdByEmail: user?.email,
       ),
+    );
+  }
+
+  static Stream<List<BookingRecord>> ownerBookingHistoryStream({
+    required Set<String> centerIds,
+  }) {
+    return BookingStore.bookingHistoryStream().map(
+      (_) => BookingStore.bookingHistory().where(
+        (booking) => centerIds.contains(booking.centerId),
+      ).toList(growable: false),
     );
   }
 

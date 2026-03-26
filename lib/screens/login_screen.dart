@@ -1,8 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:ui';
+import 'package:flutter/material.dart';
+
 import '../data/firebase_state.dart';
+import '../data/owner_application_store.dart';
+import '../data/role_store.dart';
+import '../data/user_directory_store.dart';
 import '../l10n/app_localizations.dart';
+import '../models/owner_application.dart';
 import '../widgets/language_toggle_button.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,30 +17,33 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen>
-    with SingleTickerProviderStateMixin {
+{
+  static const String _backgroundAsset =
+      'assets/8a498c17-fa53-4dbd-b07b-eee0a7921ffd.jpg';
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final ownerCenterNameController = TextEditingController();
+  final ownerPhoneController = TextEditingController();
+  final ownerAddressController = TextEditingController();
+  final ownerLinkController = TextEditingController();
+  final ownerNoteController = TextEditingController();
+
   bool _isLoading = false;
   bool _isSignUp = false;
-
-  late AnimationController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 6),
-    )..repeat(reverse: true);
-  }
+  bool _requestOwnerAccessOnSignUp = false;
 
   @override
   void dispose() {
-    controller.dispose();
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+    ownerCenterNameController.dispose();
+    ownerPhoneController.dispose();
+    ownerAddressController.dispose();
+    ownerLinkController.dispose();
+    ownerNoteController.dispose();
     super.dispose();
   }
 
@@ -87,9 +94,15 @@ class _LoginScreenState extends State<LoginScreen>
       _showError(l10n.authFirebaseNotInitialized);
       return;
     }
+
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
     final confirmPassword = confirmPasswordController.text.trim();
+    final ownerCenterName = ownerCenterNameController.text.trim();
+    final ownerPhone = ownerPhoneController.text.trim();
+    final ownerAddress = ownerAddressController.text.trim();
+    final ownerLink = ownerLinkController.text.trim();
+    final ownerNote = ownerNoteController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
       _showError(l10n.fillAllFields);
@@ -99,10 +112,19 @@ class _LoginScreenState extends State<LoginScreen>
       _showError(l10n.passwordsDoNotMatch);
       return;
     }
+    if (_isSignUp &&
+        _requestOwnerAccessOnSignUp &&
+        (ownerCenterName.isEmpty || ownerPhone.isEmpty || ownerAddress.isEmpty)) {
+      _showError(l10n.ownerApplicationRequiredFields);
+      return;
+    }
 
     setState(() {
       _isLoading = true;
     });
+    if (_isSignUp) {
+      authFlowInProgress.value = true;
+    }
 
     try {
       if (_isSignUp) {
@@ -110,24 +132,62 @@ class _LoginScreenState extends State<LoginScreen>
           email: email,
           password: password,
         );
-        await FirebaseAuth.instance.signOut();
+        await UserDirectoryStore.register(email);
+        await RoleStore.saveRole(
+          email: email,
+          role: _requestOwnerAccessOnSignUp
+              ? RoleStore.ownerPendingRole
+              : RoleStore.customerRole,
+        );
+        if (_requestOwnerAccessOnSignUp) {
+          await OwnerApplicationStore.saveApplication(
+            OwnerApplication(
+              email: email,
+              centerName: ownerCenterName,
+              phone: ownerPhone,
+              address: ownerAddress,
+              contactLink: ownerLink,
+              note: ownerNote,
+              requestedAt: DateTime.now(),
+            ),
+          );
+        }
         if (mounted) {
           setState(() {
             _isSignUp = false;
+            _requestOwnerAccessOnSignUp = false;
           });
         }
+        ownerCenterNameController.clear();
+        ownerPhoneController.clear();
+        ownerAddressController.clear();
+        ownerLinkController.clear();
+        ownerNoteController.clear();
         _showSuccess(l10n.accountCreated);
       } else {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
           password: password,
         );
+        await UserDirectoryStore.register(email);
+        if (!RoleStore.isAdminEmail(email)) {
+          final existingRole = await RoleStore.roleForEmail(email);
+          if (existingRole == RoleStore.customerRole) {
+            await RoleStore.saveRole(
+              email: email,
+              role: RoleStore.customerRole,
+            );
+          }
+        }
       }
     } on FirebaseAuthException catch (e) {
       _showError(_authErrorMessage(l10n, e.code));
     } catch (_) {
       _showError(l10n.authUnknownError);
     } finally {
+      if (_isSignUp) {
+        authFlowInProgress.value = false;
+      }
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -142,244 +202,340 @@ class _LoginScreenState extends State<LoginScreen>
   }) {
     return InputDecoration(
       labelText: label,
-      prefixIcon: Icon(icon, color: const Color(0xFF0F766E)),
+      prefixIcon: Icon(icon, color: const Color(0xFF67E8F9)),
       filled: true,
-      fillColor: Colors.white.withValues(alpha: 0.78),
+      fillColor: const Color(0xFF081120).withValues(alpha: 0.72),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.32)),
+        borderSide: BorderSide(
+          color: const Color(0xFF7C3AED).withValues(alpha: 0.35),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Color(0xFF0F766E), width: 1.5),
+        borderSide: const BorderSide(color: Color(0xFF67E8F9), width: 1.6),
       ),
-      labelStyle: const TextStyle(color: Color(0xFF334155)),
-      floatingLabelStyle: const TextStyle(color: Color(0xFF0F766E)),
+      labelStyle: const TextStyle(color: Color(0xFFD6E4FF)),
+      floatingLabelStyle: const TextStyle(color: Color(0xFF67E8F9)),
+    );
+  }
+
+  TextStyle get _fieldTextStyle => const TextStyle(
+        color: Colors.white,
+        fontSize: 16,
+      );
+
+  Widget _buildField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType? keyboardType,
+    bool obscureText = false,
+    int maxLines = 1,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      obscureText: obscureText,
+      maxLines: maxLines,
+      cursorColor: const Color(0xFF0F766E),
+      style: _fieldTextStyle,
+      decoration: _inputDecoration(label: label, icon: icon),
+    );
+  }
+
+  Widget _buildOwnerRequestFields(AppLocalizations l10n) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF081120).withValues(alpha: 0.74),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: const Color(0xFF7C3AED).withValues(alpha: 0.28),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.18),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CheckboxListTile(
+            value: _requestOwnerAccessOnSignUp,
+            onChanged: (value) {
+              setState(() {
+                _requestOwnerAccessOnSignUp = value ?? false;
+              });
+            },
+            contentPadding: EdgeInsets.zero,
+            controlAffinity: ListTileControlAffinity.leading,
+            activeColor: const Color(0xFF0F766E),
+            title: Text(
+              l10n.ownerSignUpOption,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Text(
+            l10n.ownerSignUpHint,
+            style: const TextStyle(
+              color: Color(0xFFD6E4FF),
+              fontSize: 13,
+              height: 1.35,
+            ),
+          ),
+          if (_requestOwnerAccessOnSignUp) ...[
+            const SizedBox(height: 12),
+            _buildField(
+              controller: ownerCenterNameController,
+              label: l10n.ownerApplicationCenterName,
+              icon: Icons.storefront_outlined,
+            ),
+            const SizedBox(height: 12),
+            _buildField(
+              controller: ownerPhoneController,
+              label: l10n.ownerApplicationPhone,
+              icon: Icons.call_outlined,
+              keyboardType: TextInputType.phone,
+            ),
+            const SizedBox(height: 12),
+            _buildField(
+              controller: ownerAddressController,
+              label: l10n.ownerApplicationAddress,
+              icon: Icons.location_on_outlined,
+              maxLines: 2,
+            ),
+            const SizedBox(height: 12),
+            _buildField(
+              controller: ownerLinkController,
+              label: l10n.ownerApplicationLink,
+              icon: Icons.link_outlined,
+              keyboardType: TextInputType.url,
+            ),
+            const SizedBox(height: 12),
+            _buildField(
+              controller: ownerNoteController,
+              label: l10n.ownerApplicationNote,
+              icon: Icons.notes_outlined,
+              maxLines: 3,
+            ),
+          ],
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final viewInsets = MediaQuery.of(context).viewInsets;
 
-    return Scaffold(
-      body: AnimatedBuilder(
-        animation: controller,
-        builder: (context, child) {
-          return Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color.lerp(
-                    const Color(0xFFFFF7ED),
-                    const Color(0xFFECFEFF),
-                    controller.value,
-                  )!,
-                  Color.lerp(
-                    const Color(0xFFE0F2FE),
-                    const Color(0xFFFFEDD5),
-                    controller.value,
-                  )!,
-                ],
-              ),
-            ),
-            child: Stack(
-              children: [
-                Positioned(
-                  top: -90,
-                  left: -50,
-                  child: Container(
-                    width: 230,
-                    height: 230,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFF14B8A6).withValues(alpha: 0.22),
-                    ),
+    final content = Stack(
+      children: [
+        SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                padding: EdgeInsets.fromLTRB(
+                  20,
+                  20,
+                  20,
+                  20 + viewInsets.bottom,
+                ),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight - 40,
                   ),
-                ),
-                Positioned(
-                  bottom: -80,
-                  right: -40,
-                  child: Container(
-                    width: 220,
-                    height: 220,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFF97316).withValues(alpha: 0.18),
-                    ),
-                  ),
-                ),
-                const Positioned(
-                  top: 8,
-                  right: 8,
-                  child: SafeArea(child: LanguageToggleButton()),
-                ),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
+                  child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 420),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(28),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                          child: Container(
-                            padding: const EdgeInsets.all(28),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.56),
-                              borderRadius: BorderRadius.circular(28),
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.75),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(
-                                    0xFF0F172A,
-                                  ).withValues(alpha: 0.08),
-                                  blurRadius: 28,
-                                  offset: const Offset(0, 12),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 64,
+                              height: 64,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: const Color(0xFF081120).withValues(alpha: 0.66),
+                                border: Border.all(
+                                  color: const Color(0xFF67E8F9).withValues(alpha: 0.55),
                                 ),
-                              ],
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 64,
-                                  height: 64,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: const Color(
-                                      0xFF0F766E,
-                                    ).withValues(alpha: 0.12),
-                                  ),
-                                  child: const Icon(
-                                    Icons.lock_outline_rounded,
-                                    color: Color(0xFF0F766E),
-                                    size: 30,
-                                  ),
-                                ),
-                                const SizedBox(height: 18),
-                                Text(
-                                  _isSignUp ? l10n.signUp : l10n.signIn,
-                                  style: const TextStyle(
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.w800,
-                                    color: Color(0xFF0F172A),
-                                    letterSpacing: -0.4,
-                                  ),
-                                ),
-                                const SizedBox(height: 24),
-                                 TextField(
-                                   controller: emailController,
-                                   keyboardType: TextInputType.emailAddress,
-                                   cursorColor: const Color(0xFF0F766E),
-                                   style: const TextStyle(
-                                     color: Color(0xFF0F172A),
-                                     fontSize: 16,
-                                   ),
-                                   decoration: _inputDecoration(
-                                     label: l10n.email,
-                                     icon: Icons.person_outline_rounded,
-                                   ),
-                                 ),
-                                const SizedBox(height: 14),
-                                TextField(
-                                  controller: passwordController,
-                                  obscureText: true,
-                                  cursorColor: const Color(0xFF0F766E),
-                                  style: const TextStyle(
-                                    color: Color(0xFF0F172A),
-                                    fontSize: 16,
-                                  ),
-                                  decoration: _inputDecoration(
-                                    label: l10n.password,
-                                    icon: Icons.key_outlined,
-                                  ),
-                                ),
-                                if (_isSignUp) ...[
-                                  const SizedBox(height: 14),
-                                  TextField(
-                                    controller: confirmPasswordController,
-                                    obscureText: true,
-                                    cursorColor: const Color(0xFF0F766E),
-                                    style: const TextStyle(
-                                      color: Color(0xFF0F172A),
-                                      fontSize: 16,
-                                    ),
-                                    decoration: _inputDecoration(
-                                      label: l10n.confirmPassword,
-                                      icon: Icons.verified_user_outlined,
-                                    ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF67E8F9).withValues(alpha: 0.16),
+                                    blurRadius: 20,
+                                    spreadRadius: 2,
                                   ),
                                 ],
-                                const SizedBox(height: 22),
-                                SizedBox(
-                                  width: double.infinity,
-                                    child: ElevatedButton(
-                                     onPressed: _isLoading ? null : _submitAuth,
-                                     style: ElevatedButton.styleFrom(
-                                       backgroundColor: const Color(0xFF0F766E),
-                                       foregroundColor: Colors.white,
-                                      elevation: 0,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 15,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(14),
-                                      ),
-                                    ),
-                                     child: _isLoading
-                                         ? const SizedBox(
-                                             width: 20,
-                                             height: 20,
-                                             child: CircularProgressIndicator(
-                                               strokeWidth: 2.2,
-                                               color: Colors.white,
-                                             ),
-                                           )
-                                          : Text(
-                                              _isSignUp ? l10n.signUp : l10n.signIn,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ),
-                                    ),
+                              ),
+                              child: const Icon(
+                                Icons.lock_outline_rounded,
+                                color: Color(0xFF67E8F9),
+                                size: 30,
+                              ),
+                            ),
+                            const SizedBox(height: 18),
+                            Text(
+                              _isSignUp ? l10n.signUp : l10n.signIn,
+                              style: const TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: -0.4,
+                                shadows: [
+                                  Shadow(
+                                    color: Color(0xCC020617),
+                                    blurRadius: 14,
+                                    offset: Offset(0, 4),
                                   ),
-                                const SizedBox(height: 10),
-                                TextButton(
-                                  onPressed: _isLoading
-                                      ? null
-                                      : () {
-                                          setState(() {
-                                            _isSignUp = !_isSignUp;
-                                          });
-                                        },
-                                  child: Text(
-                                    _isSignUp
-                                        ? l10n.switchToSignIn
-                                        : l10n.switchToSignUp,
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            _buildField(
+                              controller: emailController,
+                              label: l10n.email,
+                              icon: Icons.person_outline_rounded,
+                              keyboardType: TextInputType.emailAddress,
+                            ),
+                            const SizedBox(height: 14),
+                            _buildField(
+                              controller: passwordController,
+                              label: l10n.password,
+                              icon: Icons.key_outlined,
+                              obscureText: true,
+                            ),
+                            if (_isSignUp) ...[
+                              const SizedBox(height: 14),
+                              _buildField(
+                                controller: confirmPasswordController,
+                                label: l10n.confirmPassword,
+                                icon: Icons.verified_user_outlined,
+                                obscureText: true,
+                              ),
+                              const SizedBox(height: 14),
+                              _buildOwnerRequestFields(l10n),
+                            ],
+                            const SizedBox(height: 22),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: _isLoading ? null : _submitAuth,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF0F766E),
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
                                   ),
+                                  shadowColor: const Color(0xFF67E8F9),
                                 ),
-                               ],
-                             ),
-                          ),
+                                child: _isLoading
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : Text(
+                                        _isSignUp ? l10n.signUp : l10n.signIn,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            TextButton(
+                              onPressed: _isLoading
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        _isSignUp = !_isSignUp;
+                                        if (!_isSignUp) {
+                                          _requestOwnerAccessOnSignUp = false;
+                                        }
+                                      });
+                                    },
+                              child: Text(
+                                _isSignUp
+                                    ? l10n.switchToSignIn
+                                    : l10n.switchToSignUp,
+                                style: const TextStyle(
+                                  color: Color(0xFFE9D5FF),
+                                  fontWeight: FontWeight.w700,
+                                  shadows: [
+                                    Shadow(
+                                      color: Color(0xCC020617),
+                                      blurRadius: 12,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
                 ),
-              ],
+              );
+            },
+          ),
+        ),
+        const Positioned(
+          top: 8,
+          right: 8,
+          child: SafeArea(child: LanguageToggleButton()),
+        ),
+      ],
+    );
+
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            _backgroundAsset,
+            fit: BoxFit.cover,
+            alignment: Alignment.center,
+          ),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  const Color(0xFF13081F).withValues(alpha: 0.34),
+                  const Color(0xFF120A24).withValues(alpha: 0.48),
+                  const Color(0xFF09111D).withValues(alpha: 0.72),
+                ],
+              ),
             ),
-          );
-        },
+          ),
+          content,
+        ],
       ),
     );
   }

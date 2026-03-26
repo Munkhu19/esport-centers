@@ -1,6 +1,6 @@
 import '../models/center.dart';
 
-List<EsportCenter> centers = [
+final List<EsportCenter> seedCenters = [
   EsportCenter(
     id: "awp",
     name: "AWP Esport",
@@ -11,6 +11,7 @@ List<EsportCenter> centers = [
     phone: "80325252",
     latitude: 47.92121806036754,
     longitude: 106.85823665412931,
+    ownerEmail: "owner@awp.mn",
   ),
   EsportCenter(
     id: "pro",
@@ -22,5 +23,6 @@ List<EsportCenter> centers = [
     phone: "75351150",
     latitude: 47.92580556,
     longitude: 106.88247222,
+    ownerEmail: "owner@pro.mn",
   ),
 ];

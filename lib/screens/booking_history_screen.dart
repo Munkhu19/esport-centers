@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../data/firebase_state.dart';
+import '../data/booking_store.dart';
 import '../l10n/app_localizations.dart';
 import '../data/seat_sync_service.dart';
 import '../models/booking_record.dart';
@@ -20,6 +22,10 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     final hh = value.hour.toString().padLeft(2, '0');
     final mm = value.minute.toString().padLeft(2, '0');
     return "$y-$m-$d $hh:$mm";
+  }
+
+  String _formatSchedule(BookingRecord booking) {
+    return '${_formatDate(booking.startAt)} - ${_formatDate(booking.endAt)}';
   }
 
   Future<void> _cancelBooking(BookingRecord booking) async {
@@ -66,9 +72,47 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     setState(() {});
   }
 
+  Future<void> _clearCanceledBookings() async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.clearCanceledBookingsTitle),
+        content: Text(l10n.clearCanceledBookingsMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.no),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.clearCanceledBookingsAction),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    final user = firebaseAvailable ? FirebaseAuth.instance.currentUser : null;
+    await BookingStore.clearCanceledBookings(
+      createdByUid: user?.uid,
+      createdByEmail: user?.email,
+    );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.canceledBookingsCleared)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final user = firebaseAvailable ? FirebaseAuth.instance.currentUser : null;
+    final initialItems = BookingStore.bookingHistory(
+      createdByUid: user?.uid,
+      createdByEmail: user?.email,
+    );
 
     if (!firebaseAvailable) {
       return Scaffold(
@@ -91,11 +135,27 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.bookingHistoryTitle),
-        actions: const [LanguageToggleButton()],
+        actions: [
+          StreamBuilder<List<BookingRecord>>(
+            stream: SeatSyncService.bookingHistoryStream(),
+            initialData: initialItems,
+            builder: (context, snapshot) {
+              final hasCanceled = (snapshot.data ?? const <BookingRecord>[])
+                  .any((item) => item.isCanceled);
+              if (!hasCanceled) return const SizedBox.shrink();
+              return IconButton(
+                onPressed: _clearCanceledBookings,
+                tooltip: l10n.clearCanceledBookingsAction,
+                icon: const Icon(Icons.delete_sweep_outlined),
+              );
+            },
+          ),
+          const LanguageToggleButton(),
+        ],
       ),
       body: StreamBuilder<List<BookingRecord>>(
         stream: SeatSyncService.bookingHistoryStream(),
-        initialData: const <BookingRecord>[],
+        initialData: initialItems,
         builder: (context, snapshot) {
           final items = snapshot.data ?? const <BookingRecord>[];
           if (items.isEmpty) {
@@ -147,6 +207,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
                       const SizedBox(height: 6),
                       Text(l10n.customerLabel(booking.customerName)),
                       Text(l10n.phoneLabel(booking.phone)),
+                      Text(l10n.bookingTimeLabel(_formatSchedule(booking))),
                       Text(l10n.durationLabel(booking.durationHours)),
                       Text(l10n.pricePerHourLabel(booking.pricePerHour)),
                       Text(l10n.seatsLabel(seats)),

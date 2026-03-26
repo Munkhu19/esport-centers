@@ -8,6 +8,7 @@ class BookingRecord {
   final int pricePerHour;
   final int totalPrice;
   final List<int> seatIndexes;
+  final DateTime startAt;
   final DateTime createdAt;
   final String? createdByUid;
   final String? createdByEmail;
@@ -24,12 +25,15 @@ class BookingRecord {
     required this.pricePerHour,
     required this.totalPrice,
     required this.seatIndexes,
+    required this.startAt,
     required this.createdAt,
     this.createdByUid,
     this.createdByEmail,
     this.isCanceled = false,
     this.canceledAt,
   });
+
+  DateTime get endAt => startAt.add(Duration(hours: durationHours));
 
   BookingRecord copyWith({
     bool? isCanceled,
@@ -45,6 +49,7 @@ class BookingRecord {
       pricePerHour: pricePerHour,
       totalPrice: totalPrice,
       seatIndexes: seatIndexes,
+      startAt: startAt,
       createdAt: createdAt,
       createdByUid: createdByUid,
       createdByEmail: createdByEmail,
@@ -64,6 +69,7 @@ class BookingRecord {
       'pricePerHour': pricePerHour,
       'totalPrice': totalPrice,
       'seatIndexes': seatIndexes,
+      'startAt': startAt.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
       'createdByUid': createdByUid,
       'createdByEmail': createdByEmail,
@@ -77,8 +83,15 @@ class BookingRecord {
     final seats = rawSeats is List
         ? rawSeats.map((e) => int.tryParse(e.toString()) ?? 0).toList()
         : <int>[];
+    final rawStartAt = map['startAt']?.toString();
     final rawCreatedAt = map['createdAt']?.toString();
     final rawCanceledAt = map['canceledAt']?.toString();
+    final parsedCreatedAt = rawCreatedAt == null
+        ? DateTime.now()
+        : DateTime.tryParse(rawCreatedAt) ?? DateTime.now();
+    final parsedStartAt = rawStartAt == null
+        ? parsedCreatedAt
+        : DateTime.tryParse(rawStartAt) ?? parsedCreatedAt;
 
     return BookingRecord(
       id: map['id']?.toString() ?? '',
@@ -90,9 +103,8 @@ class BookingRecord {
       pricePerHour: int.tryParse(map['pricePerHour'].toString()) ?? 0,
       totalPrice: int.tryParse(map['totalPrice'].toString()) ?? 0,
       seatIndexes: seats,
-      createdAt: rawCreatedAt == null
-          ? DateTime.now()
-          : DateTime.tryParse(rawCreatedAt) ?? DateTime.now(),
+      startAt: parsedStartAt,
+      createdAt: parsedCreatedAt,
       createdByUid: map['createdByUid']?.toString(),
       createdByEmail: map['createdByEmail']?.toString(),
       isCanceled: map['isCanceled'] == true,
