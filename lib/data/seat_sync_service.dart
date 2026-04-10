@@ -28,6 +28,7 @@ class SeatSyncService {
     required String phone,
     required int durationHours,
     required int pricePerHour,
+    required int graceMinutes,
     required DateTime startAt,
     required List<int> seatIndexes,
   }) async {
@@ -56,6 +57,7 @@ class SeatSyncService {
       phone: phone,
       durationHours: durationHours,
       pricePerHour: pricePerHour,
+      graceMinutes: graceMinutes,
       startAt: startAt,
       createdByUid: user?.uid,
       createdByEmail: user?.email,

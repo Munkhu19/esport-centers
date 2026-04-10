@@ -425,6 +425,17 @@
     "ownerCenterImageFailed":  "Зураг сонгоход алдаа гарлаа.",
     "ownerSeatManagerShort":  "Суудал",
     "ownerSeatManagerHint":  "Суудал дээр дарж хаах эсвэл нээж болно. Захиалгатай суудлыг өөрчлөхгүй.",
+    "ownerSeatPreviewTimeLabel":  "Захиалга шалгах цаг",
+    "ownerSeatPreviewHint":  "Сонгосон 1 цагийн дотор захиалгатай суудал улаанаар харагдана.",
+    "ownerSeatBookingsAtTimeTitle":  "{time} цагийн захиалгууд",
+    "@ownerSeatBookingsAtTimeTitle":  {
+      "placeholders":  {
+        "time":  {
+
+        }
+      }
+    },
+    "ownerSeatNoBookingsAtTime":  "Энэ цагт захиалга алга.",
     "ownerSeatAvailable":  "Нээлттэй",
     "ownerSeatBlocked":  "Хаалттай",
     "ownerSeatBooked":  "Захиалгатай",

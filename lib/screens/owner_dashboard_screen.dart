@@ -96,7 +96,8 @@ class OwnerDashboardScreen extends StatelessWidget {
             stream: BookingStore.bookingHistoryStream(),
             initialData: BookingStore.bookingHistory(),
             builder: (context, snapshot) {
-              final bookings = (snapshot.data ?? const <BookingRecord>[])
+              final currentItems = BookingStore.bookingHistory();
+              final bookings = currentItems
                   .where((booking) => _isOwnedBooking(booking, ownedIds, ownedNames))
                   .toList(growable: false);
             final recentBookings = _sortRecentBookings(bookings);

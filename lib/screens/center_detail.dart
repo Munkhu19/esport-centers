@@ -11,6 +11,15 @@ class CenterDetail extends StatelessWidget {
 
   const CenterDetail({super.key, required this.center});
 
+  String _bookingNoShowPolicyText(BuildContext context) {
+    final isMn = Localizations.localeOf(context).languageCode == 'mn';
+    final minutes = center.lateArrivalGraceMinutes;
+    if (isMn) {
+      return 'Эхлэх цагаас хойш $minutes минутын дотор ирээгүй бол захиалга автоматаар цуцлагдана.';
+    }
+    return 'If you do not arrive within $minutes minutes after the start time, the booking will be canceled automatically.';
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -57,6 +66,11 @@ class CenterDetail extends StatelessWidget {
           Text(l10n.pcSpecLabel(center.pcSpec), style: const TextStyle(fontSize: 18)),
           const SizedBox(height: 10),
           Text(l10n.pricePerHourLabel(center.price), style: const TextStyle(fontSize: 18)),
+          const SizedBox(height: 10),
+          Text(
+            _bookingNoShowPolicyText(context),
+            style: const TextStyle(fontSize: 16, color: Colors.white70),
+          ),
           const SizedBox(height: 10),
           Text(l10n.phoneLabel(center.phone), style: const TextStyle(fontSize: 18)),
           const SizedBox(height: 32),

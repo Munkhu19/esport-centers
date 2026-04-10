@@ -357,6 +357,15 @@
   "ownerCenterImageFailed": "Failed to pick image.",
   "ownerSeatManagerShort": "Seat manager",
   "ownerSeatManagerHint": "Tap a seat to block or unblock it. Booked seats cannot be changed.",
+  "ownerSeatPreviewTimeLabel": "Booking check time",
+  "ownerSeatPreviewHint": "Red seats are booked during the selected hour.",
+  "ownerSeatBookingsAtTimeTitle": "Bookings at {time}",
+  "@ownerSeatBookingsAtTimeTitle": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "ownerSeatNoBookingsAtTime": "No bookings during this time.",
   "ownerSeatAvailable": "Available",
   "ownerSeatBlocked": "Blocked",
   "ownerSeatBooked": "Booked",

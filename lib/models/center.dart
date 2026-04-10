@@ -11,6 +11,7 @@ class EsportCenter {
   final String? ownerEmail;
   final String? profileImageBase64;
   final List<String> imagesBase64;
+  final int lateArrivalGraceMinutes;
 
   EsportCenter({
     required this.id,
@@ -25,6 +26,7 @@ class EsportCenter {
     this.ownerEmail,
     this.profileImageBase64,
     List<String>? imagesBase64,
+    this.lateArrivalGraceMinutes = 15,
   }) : imagesBase64 = List<String>.unmodifiable(imagesBase64 ?? const <String>[]);
 
   EsportCenter copyWith({
@@ -40,6 +42,7 @@ class EsportCenter {
     String? ownerEmail,
     String? profileImageBase64,
     List<String>? imagesBase64,
+    int? lateArrivalGraceMinutes,
   }) {
     return EsportCenter(
       id: id ?? this.id,
@@ -54,6 +57,8 @@ class EsportCenter {
       ownerEmail: ownerEmail ?? this.ownerEmail,
       profileImageBase64: profileImageBase64 ?? this.profileImageBase64,
       imagesBase64: imagesBase64 ?? this.imagesBase64,
+      lateArrivalGraceMinutes:
+          lateArrivalGraceMinutes ?? this.lateArrivalGraceMinutes,
     );
   }
 
@@ -71,6 +76,7 @@ class EsportCenter {
       'ownerEmail': ownerEmail,
       'profileImageBase64': profileImageBase64,
       'imagesBase64': imagesBase64,
+      'lateArrivalGraceMinutes': lateArrivalGraceMinutes,
     };
   }
 
@@ -101,6 +107,8 @@ class EsportCenter {
           ? profileImage
           : ((legacyImage != null && legacyImage.isNotEmpty) ? legacyImage : null),
       imagesBase64: parsedImages,
+      lateArrivalGraceMinutes:
+          int.tryParse(map['lateArrivalGraceMinutes'].toString()) ?? 15,
     );
   }
 }

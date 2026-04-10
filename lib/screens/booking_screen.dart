@@ -71,6 +71,15 @@ class _BookingScreenState extends State<BookingScreen> {
     return '$y-$m-$d $hh:$mm';
   }
 
+  String _bookingNoShowPolicyText(BuildContext context) {
+    final isMn = Localizations.localeOf(context).languageCode == 'mn';
+    final minutes = widget.center.lateArrivalGraceMinutes;
+    if (isMn) {
+      return 'Эхлэх цагаас хойш $minutes минутын дотор ирээгүй бол захиалга автоматаар цуцлагдана.';
+    }
+    return 'If you do not arrive within $minutes minutes after the start time, the booking will be canceled automatically.';
+  }
+
   Future<void> _pickStartAt() async {
     final date = await showDatePicker(
       context: context,
@@ -155,6 +164,7 @@ class _BookingScreenState extends State<BookingScreen> {
         phone: phone,
         durationHours: hours,
         pricePerHour: widget.center.price,
+        graceMinutes: widget.center.lateArrivalGraceMinutes,
         startAt: _startAt,
         seatIndexes: selected,
       );
@@ -228,94 +238,104 @@ class _BookingScreenState extends State<BookingScreen> {
         ? l10n.noneSelected
         : selected.map((e) => 'PC ${e + 1}').join(', ');
     final totalPrice = _previewTotalPrice(selected.length);
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.bookingTitle),
         actions: const [LanguageToggleButton()],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.centerLabel(widget.center.name),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              l10n.selectedSeatsLabel(seats),
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              l10n.pricePerHourLabel(widget.center.price),
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(labelText: l10n.name),
-            ),
-            const SizedBox(height: 15),
-            TextField(
-              controller: phoneController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(8),
-              ],
-              decoration: InputDecoration(labelText: l10n.phone),
-            ),
-            const SizedBox(height: 15),
-            InkWell(
-              onTap: _pickStartAt,
-              borderRadius: BorderRadius.circular(15),
-              child: InputDecorator(
-                decoration: InputDecoration(labelText: l10n.bookingStartTime),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(_formatDateTime(_startAt)),
-                    const Icon(Icons.schedule),
-                  ],
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: EdgeInsets.fromLTRB(20, 20, 20, 20 + bottomInset),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.centerLabel(widget.center.name),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                l10n.selectedSeatsLabel(seats),
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                l10n.pricePerHourLabel(widget.center.price),
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                _bookingNoShowPolicyText(context),
+                style: const TextStyle(fontSize: 14, color: Colors.white70),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(labelText: l10n.name),
+              ),
+              const SizedBox(height: 15),
+              TextField(
+                controller: phoneController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(8),
+                ],
+                decoration: InputDecoration(labelText: l10n.phone),
+              ),
+              const SizedBox(height: 15),
+              InkWell(
+                onTap: _pickStartAt,
+                borderRadius: BorderRadius.circular(15),
+                child: InputDecorator(
+                  decoration: InputDecoration(labelText: l10n.bookingStartTime),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(_formatDateTime(_startAt)),
+                      const Icon(Icons.schedule),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 15),
-            TextField(
-              controller: durationController,
-              keyboardType: TextInputType.number,
-              onChanged: (_) => setState(() {}),
-              decoration: InputDecoration(labelText: l10n.playDurationHours),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              l10n.totalPriceLabel(totalPrice),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isSubmitting ? null : submitBooking,
-                child: _isSubmitting
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : Text(
-                        l10n.confirmBooking,
-                        textAlign: TextAlign.center,
-                      ),
+              const SizedBox(height: 15),
+              TextField(
+                controller: durationController,
+                keyboardType: TextInputType.number,
+                onChanged: (_) => setState(() {}),
+                decoration: InputDecoration(labelText: l10n.playDurationHours),
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              Text(
+                l10n.totalPriceLabel(totalPrice),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isSubmitting ? null : submitBooking,
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          l10n.confirmBooking,
+                          textAlign: TextAlign.center,
+                        ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

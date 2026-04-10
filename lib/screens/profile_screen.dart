@@ -571,16 +571,14 @@ class _ProfileSettingsScreenState extends State<_ProfileSettingsScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n.profileAvatarUpdated),
-          backgroundColor: const Color(0xFF15803D),
+          content: Text(l10n.profileAvatarUpdateFailed),
         ),
       );
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n.profileAvatarUpdated),
-          backgroundColor: const Color(0xFF15803D),
+          content: Text(l10n.profileAvatarUpdateFailed),
         ),
       );
     } finally {

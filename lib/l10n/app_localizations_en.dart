@@ -672,6 +672,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ownerSeatManagerHint => 'Tap a seat to block or unblock it. Booked seats cannot be changed.';
 
   @override
+  String get ownerSeatPreviewTimeLabel => 'Booking check time';
+
+  @override
+  String get ownerSeatPreviewHint => 'Red seats are booked during the selected hour.';
+
+  @override
+  String ownerSeatBookingsAtTimeTitle(Object time) {
+    return 'Bookings at $time';
+  }
+
+  @override
+  String get ownerSeatNoBookingsAtTime => 'No bookings during this time.';
+
+  @override
   String get ownerSeatAvailable => 'Available';
 
   @override

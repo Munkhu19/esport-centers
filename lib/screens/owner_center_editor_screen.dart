@@ -32,11 +32,19 @@ class _OwnerCenterEditorScreenState extends State<OwnerCenterEditorScreen> {
   late final TextEditingController _phoneController;
   late final TextEditingController _latitudeController;
   late final TextEditingController _longitudeController;
+  late final TextEditingController _graceMinutesController;
   String? _profileImageBase64;
   List<String> _imagesBase64 = <String>[];
   final Set<int> _selectedImageIndexes = <int>{};
 
   bool get _selectionMode => _selectedImageIndexes.isNotEmpty;
+
+  String _graceMinutesLabel(BuildContext context) {
+    final isMn = Localizations.localeOf(context).languageCode == 'mn';
+    return isMn
+        ? 'Хоцролт зөвшөөрөх хугацаа (минут)'
+        : 'Late arrival limit (minutes)';
+  }
 
   @override
   void initState() {
@@ -50,6 +58,9 @@ class _OwnerCenterEditorScreenState extends State<OwnerCenterEditorScreen> {
     _phoneController = TextEditingController(text: center?.phone ?? '');
     _latitudeController = TextEditingController(text: center?.latitude.toString() ?? '');
     _longitudeController = TextEditingController(text: center?.longitude.toString() ?? '');
+    _graceMinutesController = TextEditingController(
+      text: (center?.lateArrivalGraceMinutes ?? 15).toString(),
+    );
     _profileImageBase64 = center?.profileImageBase64;
     _imagesBase64 = List<String>.from(center?.imagesBase64 ?? const <String>[]);
   }
@@ -64,6 +75,7 @@ class _OwnerCenterEditorScreenState extends State<OwnerCenterEditorScreen> {
     _phoneController.dispose();
     _latitudeController.dispose();
     _longitudeController.dispose();
+    _graceMinutesController.dispose();
     super.dispose();
   }
 
@@ -169,6 +181,7 @@ class _OwnerCenterEditorScreenState extends State<OwnerCenterEditorScreen> {
     final l10n = AppLocalizations.of(context)!;
     final pcCount = int.tryParse(_pcCountController.text.trim());
     final price = int.tryParse(_priceController.text.trim());
+    final graceMinutes = int.tryParse(_graceMinutesController.text.trim());
     final latitude = double.tryParse(_latitudeController.text.trim());
     final longitude = double.tryParse(_longitudeController.text.trim());
 
@@ -178,6 +191,8 @@ class _OwnerCenterEditorScreenState extends State<OwnerCenterEditorScreen> {
         _phoneController.text.trim().isEmpty ||
         pcCount == null ||
         price == null ||
+        graceMinutes == null ||
+        graceMinutes < 0 ||
         latitude == null ||
         longitude == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -199,6 +214,7 @@ class _OwnerCenterEditorScreenState extends State<OwnerCenterEditorScreen> {
       ownerEmail: widget.ownerEmail,
       profileImageBase64: _profileImageBase64,
       imagesBase64: _imagesBase64,
+      lateArrivalGraceMinutes: graceMinutes,
     );
 
     Navigator.of(context).pop(center);
@@ -418,6 +434,12 @@ class _OwnerCenterEditorScreenState extends State<OwnerCenterEditorScreen> {
             controller: _priceController,
             keyboardType: TextInputType.number,
             decoration: decoration(l10n.ownerCenterPrice),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _graceMinutesController,
+            keyboardType: TextInputType.number,
+            decoration: decoration(_graceMinutesLabel(context)),
           ),
           const SizedBox(height: 12),
           TextField(controller: _phoneController, decoration: decoration(l10n.phone)),

@@ -26,6 +26,11 @@ class _OwnerApplicationFormScreenState extends State<OwnerApplicationFormScreen>
   late final TextEditingController _addressController;
   late final TextEditingController _contactLinkController;
   late final TextEditingController _noteController;
+  final _centerNameFocusNode = FocusNode();
+  final _phoneFocusNode = FocusNode();
+  final _addressFocusNode = FocusNode();
+  final _contactLinkFocusNode = FocusNode();
+  final _noteFocusNode = FocusNode();
   bool _isSaving = false;
 
   @override
@@ -50,6 +55,11 @@ class _OwnerApplicationFormScreenState extends State<OwnerApplicationFormScreen>
     _addressController.dispose();
     _contactLinkController.dispose();
     _noteController.dispose();
+    _centerNameFocusNode.dispose();
+    _phoneFocusNode.dispose();
+    _addressFocusNode.dispose();
+    _contactLinkFocusNode.dispose();
+    _noteFocusNode.dispose();
     super.dispose();
   }
 
@@ -148,6 +158,9 @@ class _OwnerApplicationFormScreenState extends State<OwnerApplicationFormScreen>
                 children: [
                   TextField(
                     controller: _centerNameController,
+                    focusNode: _centerNameFocusNode,
+                    textInputAction: TextInputAction.next,
+                    onSubmitted: (_) => FocusScope.of(context).requestFocus(_phoneFocusNode),
                     decoration: _decoration(
                       label: l10n.ownerApplicationCenterName,
                       icon: Icons.storefront_outlined,
@@ -156,7 +169,10 @@ class _OwnerApplicationFormScreenState extends State<OwnerApplicationFormScreen>
                   const SizedBox(height: 12),
                   TextField(
                     controller: _phoneController,
+                    focusNode: _phoneFocusNode,
                     keyboardType: TextInputType.phone,
+                    textInputAction: TextInputAction.next,
+                    onSubmitted: (_) => FocusScope.of(context).requestFocus(_addressFocusNode),
                     decoration: _decoration(
                       label: l10n.ownerApplicationPhone,
                       icon: Icons.call_outlined,
@@ -165,7 +181,10 @@ class _OwnerApplicationFormScreenState extends State<OwnerApplicationFormScreen>
                   const SizedBox(height: 12),
                   TextField(
                     controller: _addressController,
+                    focusNode: _addressFocusNode,
                     maxLines: 2,
+                    textInputAction: TextInputAction.next,
+                    onSubmitted: (_) => FocusScope.of(context).requestFocus(_contactLinkFocusNode),
                     decoration: _decoration(
                       label: l10n.ownerApplicationAddress,
                       icon: Icons.location_on_outlined,
@@ -174,7 +193,10 @@ class _OwnerApplicationFormScreenState extends State<OwnerApplicationFormScreen>
                   const SizedBox(height: 12),
                   TextField(
                     controller: _contactLinkController,
+                    focusNode: _contactLinkFocusNode,
                     keyboardType: TextInputType.url,
+                    textInputAction: TextInputAction.next,
+                    onSubmitted: (_) => FocusScope.of(context).requestFocus(_noteFocusNode),
                     decoration: _decoration(
                       label: l10n.ownerApplicationLink,
                       icon: Icons.link_outlined,
@@ -183,7 +205,13 @@ class _OwnerApplicationFormScreenState extends State<OwnerApplicationFormScreen>
                   const SizedBox(height: 12),
                   TextField(
                     controller: _noteController,
+                    focusNode: _noteFocusNode,
                     maxLines: 4,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) {
+                      FocusScope.of(context).unfocus();
+                      _submit();
+                    },
                     decoration: _decoration(
                       label: l10n.ownerApplicationNote,
                       icon: Icons.notes_outlined,

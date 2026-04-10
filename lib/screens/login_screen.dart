@@ -29,6 +29,14 @@ class _LoginScreenState extends State<LoginScreen>
   final ownerAddressController = TextEditingController();
   final ownerLinkController = TextEditingController();
   final ownerNoteController = TextEditingController();
+  final _emailFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
+  final _confirmPasswordFocusNode = FocusNode();
+  final _ownerCenterNameFocusNode = FocusNode();
+  final _ownerPhoneFocusNode = FocusNode();
+  final _ownerAddressFocusNode = FocusNode();
+  final _ownerLinkFocusNode = FocusNode();
+  final _ownerNoteFocusNode = FocusNode();
 
   bool _isLoading = false;
   bool _isSignUp = false;
@@ -44,6 +52,14 @@ class _LoginScreenState extends State<LoginScreen>
     ownerAddressController.dispose();
     ownerLinkController.dispose();
     ownerNoteController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    _confirmPasswordFocusNode.dispose();
+    _ownerCenterNameFocusNode.dispose();
+    _ownerPhoneFocusNode.dispose();
+    _ownerAddressFocusNode.dispose();
+    _ownerLinkFocusNode.dispose();
+    _ownerNoteFocusNode.dispose();
     super.dispose();
   }
 
@@ -233,15 +249,28 @@ class _LoginScreenState extends State<LoginScreen>
     required TextEditingController controller,
     required String label,
     required IconData icon,
+    FocusNode? focusNode,
+    FocusNode? nextFocus,
     TextInputType? keyboardType,
     bool obscureText = false,
     int maxLines = 1,
+    VoidCallback? onDone,
   }) {
     return TextField(
       controller: controller,
+      focusNode: focusNode,
       keyboardType: keyboardType,
       obscureText: obscureText,
       maxLines: maxLines,
+      textInputAction: nextFocus != null ? TextInputAction.next : TextInputAction.done,
+      onSubmitted: (_) {
+        if (nextFocus != null) {
+          FocusScope.of(context).requestFocus(nextFocus);
+          return;
+        }
+        FocusScope.of(context).unfocus();
+        onDone?.call();
+      },
       cursorColor: const Color(0xFF0F766E),
       style: _fieldTextStyle,
       decoration: _inputDecoration(label: label, icon: icon),
@@ -301,12 +330,16 @@ class _LoginScreenState extends State<LoginScreen>
               controller: ownerCenterNameController,
               label: l10n.ownerApplicationCenterName,
               icon: Icons.storefront_outlined,
+              focusNode: _ownerCenterNameFocusNode,
+              nextFocus: _ownerPhoneFocusNode,
             ),
             const SizedBox(height: 12),
             _buildField(
               controller: ownerPhoneController,
               label: l10n.ownerApplicationPhone,
               icon: Icons.call_outlined,
+              focusNode: _ownerPhoneFocusNode,
+              nextFocus: _ownerAddressFocusNode,
               keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 12),
@@ -314,6 +347,8 @@ class _LoginScreenState extends State<LoginScreen>
               controller: ownerAddressController,
               label: l10n.ownerApplicationAddress,
               icon: Icons.location_on_outlined,
+              focusNode: _ownerAddressFocusNode,
+              nextFocus: _ownerLinkFocusNode,
               maxLines: 2,
             ),
             const SizedBox(height: 12),
@@ -321,6 +356,8 @@ class _LoginScreenState extends State<LoginScreen>
               controller: ownerLinkController,
               label: l10n.ownerApplicationLink,
               icon: Icons.link_outlined,
+              focusNode: _ownerLinkFocusNode,
+              nextFocus: _ownerNoteFocusNode,
               keyboardType: TextInputType.url,
             ),
             const SizedBox(height: 12),
@@ -328,7 +365,9 @@ class _LoginScreenState extends State<LoginScreen>
               controller: ownerNoteController,
               label: l10n.ownerApplicationNote,
               icon: Icons.notes_outlined,
+              focusNode: _ownerNoteFocusNode,
               maxLines: 3,
+              onDone: _submitAuth,
             ),
           ],
         ],
@@ -412,6 +451,8 @@ class _LoginScreenState extends State<LoginScreen>
                               controller: emailController,
                               label: l10n.email,
                               icon: Icons.person_outline_rounded,
+                              focusNode: _emailFocusNode,
+                              nextFocus: _passwordFocusNode,
                               keyboardType: TextInputType.emailAddress,
                             ),
                             const SizedBox(height: 14),
@@ -419,7 +460,10 @@ class _LoginScreenState extends State<LoginScreen>
                               controller: passwordController,
                               label: l10n.password,
                               icon: Icons.key_outlined,
+                              focusNode: _passwordFocusNode,
+                              nextFocus: _isSignUp ? _confirmPasswordFocusNode : null,
                               obscureText: true,
+                              onDone: _submitAuth,
                             ),
                             if (_isSignUp) ...[
                               const SizedBox(height: 14),
@@ -427,7 +471,12 @@ class _LoginScreenState extends State<LoginScreen>
                                 controller: confirmPasswordController,
                                 label: l10n.confirmPassword,
                                 icon: Icons.verified_user_outlined,
+                                focusNode: _confirmPasswordFocusNode,
+                                nextFocus: _requestOwnerAccessOnSignUp
+                                    ? _ownerCenterNameFocusNode
+                                    : null,
                                 obscureText: true,
+                                onDone: _submitAuth,
                               ),
                               const SizedBox(height: 14),
                               _buildOwnerRequestFields(l10n),

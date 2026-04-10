@@ -672,6 +672,20 @@ class AppLocalizationsMn extends AppLocalizations {
   String get ownerSeatManagerHint => 'Суудал дээр дарж хаах эсвэл нээж болно. Захиалгатай суудлыг өөрчлөхгүй.';
 
   @override
+  String get ownerSeatPreviewTimeLabel => 'Захиалга шалгах цаг';
+
+  @override
+  String get ownerSeatPreviewHint => 'Сонгосон 1 цагийн дотор захиалгатай суудал улаанаар харагдана.';
+
+  @override
+  String ownerSeatBookingsAtTimeTitle(Object time) {
+    return '$time цагийн захиалгууд';
+  }
+
+  @override
+  String get ownerSeatNoBookingsAtTime => 'Энэ цагт захиалга алга.';
+
+  @override
   String get ownerSeatAvailable => 'Нээлттэй';
 
   @override

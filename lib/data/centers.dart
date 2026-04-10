@@ -12,6 +12,7 @@ final List<EsportCenter> seedCenters = [
     latitude: 47.92121806036754,
     longitude: 106.85823665412931,
     ownerEmail: "owner@awp.mn",
+    lateArrivalGraceMinutes: 15,
   ),
   EsportCenter(
     id: "pro",
@@ -24,5 +25,6 @@ final List<EsportCenter> seedCenters = [
     latitude: 47.92580556,
     longitude: 106.88247222,
     ownerEmail: "owner@pro.mn",
+    lateArrivalGraceMinutes: 15,
   ),
 ];

@@ -52,14 +52,97 @@ class _OwnerBookingsScreenState extends State<OwnerBookingsScreen> {
     return '${_formatDate(booking.startAt)} - ${_formatDate(booking.endAt)}';
   }
 
+  String _statusLabel(BookingRecord booking, AppLocalizations l10n) {
+    final isMn = Localizations.localeOf(context).languageCode == 'mn';
+    switch (booking.statusCodeAt(DateTime.now())) {
+      case 'upcoming':
+        return isMn ? 'Удахгүй' : 'Upcoming';
+      case 'checked_in':
+        return isMn ? 'Ирсэн' : 'Checked in';
+      case 'completed':
+        return isMn ? 'Дууссан' : 'Completed';
+      case 'no_show':
+        return isMn ? 'Ирээгүй' : 'No-show';
+      case 'canceled':
+        return l10n.statusCanceled;
+      default:
+        return l10n.statusActive;
+    }
+  }
+
+  Color _statusColor(BookingRecord booking) {
+    switch (booking.statusCodeAt(DateTime.now())) {
+      case 'upcoming':
+        return const Color(0xFF1D4ED8);
+      case 'checked_in':
+        return const Color(0xFF16A34A);
+      case 'completed':
+        return const Color(0xFF475569);
+      case 'no_show':
+        return const Color(0xFFDC2626);
+      case 'canceled':
+        return const Color(0xFFB91C1C);
+      default:
+        return const Color(0xFFF59E0B);
+    }
+  }
+
+  bool _canCheckIn(BookingRecord booking) {
+    final now = DateTime.now();
+    return !booking.isCanceled && !booking.isCheckedIn && booking.endAt.isAfter(now);
+  }
+
+  String _graceDeadlineText(BookingRecord booking) {
+    final isMn = Localizations.localeOf(context).languageCode == 'mn';
+    final formatted = _formatDate(booking.noShowDeadline);
+    return isMn
+        ? 'Ирээгүй бол автоматаар цуцлах цаг: $formatted'
+        : 'Auto-cancel if not arrived by: $formatted';
+  }
+
+  String _checkedInAtText(DateTime value) {
+    final isMn = Localizations.localeOf(context).languageCode == 'mn';
+    return isMn ? 'Ирсэн: ${_formatDate(value)}' : 'Checked in: ${_formatDate(value)}';
+  }
+
+  String _noShowAtText(DateTime value) {
+    final isMn = Localizations.localeOf(context).languageCode == 'mn';
+    return isMn
+        ? 'Ирээгүй тул цуцлагдсан: ${_formatDate(value)}'
+        : 'No-show canceled: ${_formatDate(value)}';
+  }
+
+  String _markArrivedLabel() {
+    final isMn = Localizations.localeOf(context).languageCode == 'mn';
+    return isMn ? 'Ирсэн гэж тэмдэглэх' : 'Mark arrived';
+  }
+
+  String _checkInSuccessText() {
+    final isMn = Localizations.localeOf(context).languageCode == 'mn';
+    return isMn ? 'Хэрэглэгчийг ирсэн гэж тэмдэглэлээ.' : 'Customer marked as arrived.';
+  }
+
+  String _checkInUnavailableText() {
+    final isMn = Localizations.localeOf(context).languageCode == 'mn';
+    return isMn
+        ? 'Энэ захиалгыг одоо ирсэн гэж тэмдэглэх боломжгүй.'
+        : 'This booking can no longer be checked in.';
+  }
+
   List<BookingRecord> _sortBookings(List<BookingRecord> items) {
     final sorted = items.toList(growable: false);
-    sorted.sort((a, b) {
-      final aDate = a.canceledAt ?? a.createdAt;
-      final bDate = b.canceledAt ?? b.createdAt;
-      return bDate.compareTo(aDate);
-    });
+    sorted.sort((a, b) => b.startAt.compareTo(a.startAt));
     return sorted;
+  }
+
+  Future<void> _checkInBooking(BookingRecord booking) async {
+    final updated = await BookingStore.checkInBooking(booking.id);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(updated ? _checkInSuccessText() : _checkInUnavailableText()),
+      ),
+    );
   }
 
   @override
@@ -84,7 +167,8 @@ class _OwnerBookingsScreenState extends State<OwnerBookingsScreen> {
             stream: BookingStore.bookingHistoryStream(),
             initialData: BookingStore.bookingHistory(),
             builder: (context, snapshot) {
-              final allItems = (snapshot.data ?? const <BookingRecord>[])
+              final currentItems = BookingStore.bookingHistory();
+              final allItems = currentItems
                   .where(
                     (booking) => _isOwnedBooking(
                       booking,
@@ -150,6 +234,7 @@ class _OwnerBookingsScreenState extends State<OwnerBookingsScreen> {
                               final seats = booking.seatIndexes
                                   .map((e) => 'PC ${e + 1}')
                                   .join(', ');
+                              final statusColor = _statusColor(booking);
 
                               return Card(
                                 margin: const EdgeInsets.only(bottom: 12),
@@ -170,14 +255,8 @@ class _OwnerBookingsScreenState extends State<OwnerBookingsScreen> {
                                             ),
                                           ),
                                           Chip(
-                                            label: Text(
-                                              booking.isCanceled
-                                                  ? l10n.statusCanceled
-                                                  : l10n.statusActive,
-                                            ),
-                                            backgroundColor: booking.isCanceled
-                                                ? Colors.red.withValues(alpha: 0.2)
-                                                : Colors.green.withValues(alpha: 0.2),
+                                            label: Text(_statusLabel(booking, l10n)),
+                                            backgroundColor: statusColor.withValues(alpha: 0.2),
                                           ),
                                         ],
                                       ),
@@ -187,17 +266,28 @@ class _OwnerBookingsScreenState extends State<OwnerBookingsScreen> {
                                       Text(l10n.bookingTimeLabel(_formatSchedule(booking))),
                                       Text(l10n.durationLabel(booking.durationHours)),
                                       Text(l10n.seatsLabel(seats)),
+                                      Text(_graceDeadlineText(booking)),
                                       Text(
                                         l10n.totalPriceLabel(booking.totalPrice),
                                         style: const TextStyle(fontWeight: FontWeight.bold),
                                       ),
                                       Text(l10n.createdLabel(_formatDate(booking.createdAt))),
+                                      if (booking.isCheckedIn && booking.checkedInAt != null)
+                                        Text(_checkedInAtText(booking.checkedInAt!)),
+                                      if (booking.isNoShow && booking.noShowAt != null)
+                                        Text(_noShowAtText(booking.noShowAt!)),
                                       if (booking.isCanceled && booking.canceledAt != null)
-                                        Text(
-                                          l10n.canceledLabel(
-                                            _formatDate(booking.canceledAt!),
+                                        Text(l10n.canceledLabel(_formatDate(booking.canceledAt!))),
+                                      if (_canCheckIn(booking)) ...[
+                                        const SizedBox(height: 10),
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: ElevatedButton(
+                                            onPressed: () => _checkInBooking(booking),
+                                            child: Text(_markArrivedLabel()),
                                           ),
                                         ),
+                                      ],
                                     ],
                                   ),
                                 ),

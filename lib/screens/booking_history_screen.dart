@@ -15,6 +15,41 @@ class BookingHistoryScreen extends StatefulWidget {
 }
 
 class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
+  String _statusLabel(BookingRecord booking, AppLocalizations l10n) {
+    final isMn = Localizations.localeOf(context).languageCode == 'mn';
+    switch (booking.statusCodeAt(DateTime.now())) {
+      case 'upcoming':
+        return isMn ? 'Удахгүй' : 'Upcoming';
+      case 'checked_in':
+        return isMn ? 'Ирсэн' : 'Checked in';
+      case 'completed':
+        return isMn ? 'Дууссан' : 'Completed';
+      case 'no_show':
+        return isMn ? 'Ирээгүй' : 'No-show';
+      case 'canceled':
+        return l10n.statusCanceled;
+      default:
+        return l10n.statusActive;
+    }
+  }
+
+  Color _statusColor(BookingRecord booking) {
+    switch (booking.statusCodeAt(DateTime.now())) {
+      case 'upcoming':
+        return const Color(0xFF1D4ED8);
+      case 'checked_in':
+        return const Color(0xFF16A34A);
+      case 'completed':
+        return const Color(0xFF475569);
+      case 'no_show':
+        return const Color(0xFFDC2626);
+      case 'canceled':
+        return const Color(0xFFB91C1C);
+      default:
+        return const Color(0xFFF59E0B);
+    }
+  }
+
   String _formatDate(DateTime value) {
     final y = value.year.toString().padLeft(4, '0');
     final m = value.month.toString().padLeft(2, '0');
@@ -26,6 +61,26 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
 
   String _formatSchedule(BookingRecord booking) {
     return '${_formatDate(booking.startAt)} - ${_formatDate(booking.endAt)}';
+  }
+
+  String _graceDeadlineText(BookingRecord booking) {
+    final isMn = Localizations.localeOf(context).languageCode == 'mn';
+    final formatted = _formatDate(booking.noShowDeadline);
+    return isMn
+        ? 'Ирээгүй бол автоматаар цуцлах цаг: $formatted'
+        : 'Auto-cancel if not arrived by: $formatted';
+  }
+
+  String _checkedInAtText(DateTime value) {
+    final isMn = Localizations.localeOf(context).languageCode == 'mn';
+    return isMn ? 'Ирсэн: ${_formatDate(value)}' : 'Checked in: ${_formatDate(value)}';
+  }
+
+  String _noShowAtText(DateTime value) {
+    final isMn = Localizations.localeOf(context).languageCode == 'mn';
+    return isMn
+        ? 'Ирээгүй тул цуцлагдсан: ${_formatDate(value)}'
+        : 'No-show canceled: ${_formatDate(value)}';
   }
 
   Future<void> _cancelBooking(BookingRecord booking) async {
@@ -193,14 +248,9 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
                             ),
                           ),
                           Chip(
-                            label: Text(
-                              booking.isCanceled
-                                  ? l10n.statusCanceled
-                                  : l10n.statusActive,
-                            ),
-                            backgroundColor: booking.isCanceled
-                                ? Colors.red.withValues(alpha: 0.2)
-                                : Colors.green.withValues(alpha: 0.2),
+                            label: Text(_statusLabel(booking, l10n)),
+                            backgroundColor:
+                                _statusColor(booking).withValues(alpha: 0.2),
                           ),
                         ],
                       ),
@@ -216,6 +266,11 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(l10n.createdLabel(_formatDate(booking.createdAt))),
+                      Text(_graceDeadlineText(booking)),
+                      if (booking.isCheckedIn && booking.checkedInAt != null)
+                        Text(_checkedInAtText(booking.checkedInAt!)),
+                      if (booking.isNoShow && booking.noShowAt != null)
+                        Text(_noShowAtText(booking.noShowAt!)),
                       if (booking.isCanceled && booking.canceledAt != null)
                         Text(l10n.canceledLabel(_formatDate(booking.canceledAt!))),
                       const SizedBox(height: 10),

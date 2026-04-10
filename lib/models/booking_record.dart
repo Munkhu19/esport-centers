@@ -14,6 +14,9 @@ class BookingRecord {
   final String? createdByEmail;
   final bool isCanceled;
   final DateTime? canceledAt;
+  final int graceMinutes;
+  final DateTime? checkedInAt;
+  final DateTime? noShowAt;
 
   const BookingRecord({
     required this.id,
@@ -31,13 +34,31 @@ class BookingRecord {
     this.createdByEmail,
     this.isCanceled = false,
     this.canceledAt,
+    this.graceMinutes = 15,
+    this.checkedInAt,
+    this.noShowAt,
   });
 
   DateTime get endAt => startAt.add(Duration(hours: durationHours));
+  DateTime get noShowDeadline => startAt.add(Duration(minutes: graceMinutes));
+  bool get isCheckedIn => checkedInAt != null;
+  bool get isNoShow => noShowAt != null;
+
+  String statusCodeAt(DateTime now) {
+    if (isNoShow) return 'no_show';
+    if (isCanceled) return 'canceled';
+    if (!endAt.isAfter(now)) return 'completed';
+    if (isCheckedIn) return 'checked_in';
+    if (startAt.isAfter(now)) return 'upcoming';
+    return 'active';
+  }
 
   BookingRecord copyWith({
     bool? isCanceled,
     DateTime? canceledAt,
+    int? graceMinutes,
+    DateTime? checkedInAt,
+    DateTime? noShowAt,
   }) {
     return BookingRecord(
       id: id,
@@ -55,6 +76,9 @@ class BookingRecord {
       createdByEmail: createdByEmail,
       isCanceled: isCanceled ?? this.isCanceled,
       canceledAt: canceledAt ?? this.canceledAt,
+      graceMinutes: graceMinutes ?? this.graceMinutes,
+      checkedInAt: checkedInAt ?? this.checkedInAt,
+      noShowAt: noShowAt ?? this.noShowAt,
     );
   }
 
@@ -75,6 +99,9 @@ class BookingRecord {
       'createdByEmail': createdByEmail,
       'isCanceled': isCanceled,
       'canceledAt': canceledAt?.toIso8601String(),
+      'graceMinutes': graceMinutes,
+      'checkedInAt': checkedInAt?.toIso8601String(),
+      'noShowAt': noShowAt?.toIso8601String(),
     };
   }
 
@@ -111,6 +138,13 @@ class BookingRecord {
       canceledAt: rawCanceledAt == null
           ? null
           : DateTime.tryParse(rawCanceledAt),
+      graceMinutes: int.tryParse(map['graceMinutes'].toString()) ?? 15,
+      checkedInAt: map['checkedInAt'] == null
+          ? null
+          : DateTime.tryParse(map['checkedInAt'].toString()),
+      noShowAt: map['noShowAt'] == null
+          ? null
+          : DateTime.tryParse(map['noShowAt'].toString()),
     );
   }
 }

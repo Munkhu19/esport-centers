@@ -21,13 +21,8 @@ class _OwnerSeatManagerScreenState extends State<OwnerSeatManagerScreen> {
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now().add(const Duration(hours: 1));
+    final now = DateTime.now();
     _previewStartAt = DateTime(now.year, now.month, now.day, now.hour);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   String _formatDateTime(DateTime value) {
@@ -42,7 +37,7 @@ class _OwnerSeatManagerScreenState extends State<OwnerSeatManagerScreen> {
   Future<void> _pickPreviewStartAt() async {
     final date = await showDatePicker(
       context: context,
-      firstDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(const Duration(days: 1)),
       lastDate: DateTime.now().add(const Duration(days: 30)),
       initialDate: _previewStartAt,
     );
@@ -65,6 +60,23 @@ class _OwnerSeatManagerScreenState extends State<OwnerSeatManagerScreen> {
     });
   }
 
+  List<BookingRecord> _bookingsAtPreviewTime(List<BookingRecord> history) {
+    final previewEndAt = _previewStartAt.add(const Duration(hours: 1));
+    final filtered = history.where((item) {
+      if (item.isCanceled || item.centerId != widget.center.id) return false;
+      return _previewStartAt.isBefore(item.endAt) &&
+          item.startAt.isBefore(previewEndAt);
+    }).toList();
+
+    filtered.sort((a, b) => a.startAt.compareTo(b.startAt));
+    return filtered;
+  }
+
+  String _seatText(List<int> seatIndexes) {
+    final sorted = [...seatIndexes]..sort();
+    return sorted.map((e) => 'PC ${e + 1}').join(', ');
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -82,20 +94,19 @@ class _OwnerSeatManagerScreenState extends State<OwnerSeatManagerScreen> {
             stream: BookingStore.blockedSeatsStream(widget.center.id),
             initialData: BookingStore.blockedSeats(widget.center.id),
             builder: (context, blockedSnapshot) {
+              final history = historySnapshot.data ?? const <BookingRecord>[];
               final blockedSeats = blockedSnapshot.data ?? const <int>{};
-              const durationHours = 1;
-              final bookedSeats = durationHours <= 0
-                  ? <int>{}
-                  : BookingStore.scheduledBookedSeats(
-                      centerId: widget.center.id,
-                      startAt: _previewStartAt,
-                      durationHours: durationHours,
-                    );
+              final bookingsAtPreview = _bookingsAtPreviewTime(history);
+              final bookedSeats = BookingStore.scheduledBookedSeats(
+                centerId: widget.center.id,
+                startAt: _previewStartAt,
+                durationHours: 1,
+              );
 
               return Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
                     child: Column(
                       children: [
                         InkWell(
@@ -103,7 +114,7 @@ class _OwnerSeatManagerScreenState extends State<OwnerSeatManagerScreen> {
                           borderRadius: BorderRadius.circular(15),
                           child: InputDecorator(
                             decoration: InputDecoration(
-                              labelText: l10n.bookingStartTime,
+                              labelText: l10n.ownerSeatPreviewTimeLabel,
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -112,6 +123,14 @@ class _OwnerSeatManagerScreenState extends State<OwnerSeatManagerScreen> {
                                 const Icon(Icons.schedule),
                               ],
                             ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            l10n.ownerSeatPreviewHint,
+                            style: const TextStyle(color: Colors.white70),
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -137,7 +156,7 @@ class _OwnerSeatManagerScreenState extends State<OwnerSeatManagerScreen> {
                   ),
                   Expanded(
                     child: GridView.builder(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       itemCount: widget.center.pcCount,
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 5,
@@ -182,12 +201,46 @@ class _OwnerSeatManagerScreenState extends State<OwnerSeatManagerScreen> {
                       },
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    child: Text(
-                      l10n.ownerSeatManagerHint,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.white70),
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.06),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.08),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.ownerSeatBookingsAtTimeTitle(
+                            _formatDateTime(_previewStartAt),
+                          ),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        if (bookingsAtPreview.isEmpty)
+                          Text(
+                            l10n.ownerSeatNoBookingsAtTime,
+                            style: const TextStyle(color: Colors.white70),
+                          )
+                        else
+                          ...bookingsAtPreview.map(
+                            (booking) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Text(
+                                '${booking.customerName} • ${_seatText(booking.seatIndexes)} • '
+                                '${_formatDateTime(booking.startAt)} - ${_formatDateTime(booking.endAt)}',
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ],

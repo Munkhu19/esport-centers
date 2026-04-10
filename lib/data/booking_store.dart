@@ -17,6 +17,7 @@ class BookingStore {
       StreamController<List<BookingRecord>>.broadcast(onListen: _emitHistory);
   static final List<BookingRecord> _history = [];
   static bool _initialized = false;
+  static Timer? _statusTimer;
 
   static StreamController<Set<int>> _bookedController(String centerId) {
     return _bookedControllers.putIfAbsent(centerId, () {
@@ -75,10 +76,56 @@ class BookingStore {
     return startA.isBefore(endB) && startB.isBefore(endA);
   }
 
+  static bool _applyAutomaticUpdates() {
+    final now = DateTime.now();
+    var changed = false;
+    for (var i = 0; i < _history.length; i++) {
+      final item = _history[i];
+      if (item.isCanceled || item.isCheckedIn) continue;
+      if (now.isBefore(item.noShowDeadline)) continue;
+      _history[i] = item.copyWith(
+        isCanceled: true,
+        canceledAt: now,
+        noShowAt: now,
+      );
+      changed = true;
+    }
+    return changed;
+  }
+
+  static void _refreshDerivedState({
+    bool emitBooked = true,
+    bool emitHistory = true,
+  }) {
+    final changed = _applyAutomaticUpdates();
+    _rebuildBookedSeats();
+    if (emitBooked) {
+      for (final centerId in _bookedControllers.keys) {
+        _emitBooked(centerId);
+      }
+    }
+    if (emitHistory) {
+      _emitHistory();
+    }
+    if (changed) {
+      unawaited(_saveToDisk());
+    }
+  }
+
   static Future<void> initialize() async {
     if (_initialized) return;
     _initialized = true;
     await _loadFromDisk();
+    _startStatusTimer();
+    _refreshDerivedState();
+  }
+
+  static void _startStatusTimer() {
+    _statusTimer?.cancel();
+    _statusTimer = Timer.periodic(
+      const Duration(minutes: 1),
+      (_) => _refreshDerivedState(),
+    );
   }
 
   static Future<void> _loadFromDisk() async {
@@ -176,6 +223,7 @@ class BookingStore {
   }
 
   static bool toggleBlockedSeat(String centerId, int seatIndex) {
+    _refreshDerivedState(emitBooked: false, emitHistory: false);
     final blocked = blockedSeats(centerId);
     if (bookedSeats(centerId).contains(seatIndex)) return false;
 
@@ -198,10 +246,12 @@ class BookingStore {
     required String phone,
     required int durationHours,
     required int pricePerHour,
+    required int graceMinutes,
     required DateTime startAt,
     String? createdByUid,
     String? createdByEmail,
   }) async {
+    _refreshDerivedState();
     final selected = selectedSeats(centerId);
     final blocked = blockedSeats(centerId);
     final confirmed = selected.toList()..sort();
@@ -242,15 +292,12 @@ class BookingStore {
       createdAt: DateTime.now(),
       createdByUid: createdByUid,
       createdByEmail: createdByEmail,
+      graceMinutes: graceMinutes,
     );
 
     selected.clear();
     _history.insert(0, record);
-    _rebuildBookedSeats();
-    for (final emittedCenterId in _bookedControllers.keys) {
-      _emitBooked(emittedCenterId);
-    }
-    _emitHistory();
+    _refreshDerivedState(emitBooked: false, emitHistory: false);
     unawaited(_saveToDisk());
     return record;
   }
@@ -260,6 +307,7 @@ class BookingStore {
     String? createdByUid,
     String? createdByEmail,
   }) {
+    _refreshDerivedState(emitBooked: false, emitHistory: false);
     Iterable<BookingRecord> items = _history;
     if (centerId != null) {
       items = items.where((item) => item.centerId == centerId);
@@ -277,6 +325,7 @@ class BookingStore {
     required DateTime startAt,
     required int durationHours,
   }) {
+    _refreshDerivedState();
     final endAt = startAt.add(Duration(hours: durationHours));
     final result = <int>{};
     for (final item in _history) {
@@ -294,6 +343,7 @@ class BookingStore {
   }
 
   static Future<bool> cancelBooking(String bookingId) async {
+    _refreshDerivedState();
     final index = _history.indexWhere((item) => item.id == bookingId);
     if (index == -1) return false;
 
@@ -305,12 +355,20 @@ class BookingStore {
       isCanceled: true,
       canceledAt: DateTime.now(),
     );
-    _rebuildBookedSeats();
-    for (final centerId in _bookedControllers.keys) {
-      _emitBooked(centerId);
-    }
-    _emitHistory();
-    unawaited(_saveToDisk());
+    _refreshDerivedState();
+    await _saveToDisk();
+    return true;
+  }
+
+  static Future<bool> checkInBooking(String bookingId) async {
+    _refreshDerivedState();
+    final index = _history.indexWhere((item) => item.id == bookingId);
+    if (index == -1) return false;
+    final target = _history[index];
+    if (target.isCanceled || target.isCheckedIn) return false;
+    _history[index] = target.copyWith(checkedInAt: DateTime.now());
+    _refreshDerivedState();
+    await _saveToDisk();
     return true;
   }
 
@@ -320,11 +378,7 @@ class BookingStore {
     for (final centerId in centerIds) {
       selectedSeats(centerId).clear();
     }
-    _rebuildBookedSeats();
-    for (final centerId in _bookedControllers.keys) {
-      _emitBooked(centerId);
-    }
-    _emitHistory();
+    _refreshDerivedState();
     await _saveToDisk();
   }
 
@@ -338,14 +392,10 @@ class BookingStore {
       _emitBooked(centerId);
       _emitBlocked(centerId);
     }
-    _rebuildBookedSeats();
-    for (final centerId in _bookedControllers.keys) {
-      _emitBooked(centerId);
-    }
+    _refreshDerivedState();
     for (final centerId in _blockedControllers.keys) {
       _emitBlocked(centerId);
     }
-    _emitHistory();
     await _saveToDisk();
   }
 
@@ -364,11 +414,7 @@ class BookingStore {
       return false;
     });
     if (_history.length == beforeCount) return;
-    _rebuildBookedSeats();
-    for (final centerId in _bookedControllers.keys) {
-      _emitBooked(centerId);
-    }
-    _emitHistory();
+    _refreshDerivedState();
     await _saveToDisk();
   }
 
@@ -379,11 +425,7 @@ class BookingStore {
       (item) => item.isCanceled && centerIds.contains(item.centerId),
     );
     if (_history.length == beforeCount) return;
-    _rebuildBookedSeats();
-    for (final centerId in _bookedControllers.keys) {
-      _emitBooked(centerId);
-    }
-    _emitHistory();
+    _refreshDerivedState();
     await _saveToDisk();
   }
 
@@ -403,11 +445,7 @@ class BookingStore {
       return false;
     });
     if (_history.length == beforeCount) return;
-    _rebuildBookedSeats();
-    for (final centerId in _bookedControllers.keys) {
-      _emitBooked(centerId);
-    }
-    _emitHistory();
+    _refreshDerivedState();
     await _saveToDisk();
   }
 }

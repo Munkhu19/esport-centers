@@ -1301,6 +1301,30 @@ abstract class AppLocalizations {
   /// **'Tap a seat to block or unblock it. Booked seats cannot be changed.'**
   String get ownerSeatManagerHint;
 
+  /// No description provided for @ownerSeatPreviewTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking check time'**
+  String get ownerSeatPreviewTimeLabel;
+
+  /// No description provided for @ownerSeatPreviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Red seats are booked during the selected hour.'**
+  String get ownerSeatPreviewHint;
+
+  /// No description provided for @ownerSeatBookingsAtTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings at {time}'**
+  String ownerSeatBookingsAtTimeTitle(Object time);
+
+  /// No description provided for @ownerSeatNoBookingsAtTime.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings during this time.'**
+  String get ownerSeatNoBookingsAtTime;
+
   /// No description provided for @ownerSeatAvailable.
   ///
   /// In en, this message translates to:
